@@ -11,11 +11,10 @@ fn make_fake_starship(dir: &PathBuf) -> PathBuf {
     let mut script = fs::File::create(&bin_path).unwrap();
     writeln!(
         script,
-        r#"#!/usr/bin/env bash
+r#"#!/usr/bin/env bash
 
-cat <<JSON
-[{{"content":"${{STARSHIP_CONFIG}}","style":"fg:green"}},{{"content":"${{TMUX_SESSION_NAME:-}}","style":"fg:blue"}},{{"content":"${{TMUX_WINDOW_INDEX:-}}"}}]
-JSON"#
+printf '\e[32m%s\e[0m\e[34m%s\e[0m%s\n' "${{STARSHIP_CONFIG}}" "${{TMUX_SESSION_NAME:-}}" "${{TMUX_WINDOW_INDEX:-}}"
+"#  
     )
     .unwrap();
     let mut perms = script.metadata().unwrap().permissions();

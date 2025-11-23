@@ -1,85 +1,165 @@
 use crate::config::ConfigResolution;
 use anyhow::{anyhow, Context, Result};
-use serde::Deserialize;
 use std::collections::HashMap;
 use std::process::Command;
 
-#[derive(Debug, Deserialize, PartialEq)]
-struct StarshipModule {
-    #[serde(default)]
-    content: String,
-    #[serde(default)]
-    text: String,
-    #[serde(default)]
-    style: Option<String>,
+#[derive(Debug, Clone, Default, PartialEq)]
+struct Style {
+    fg: Option<String>,
+    bg: Option<String>,
+    bold: bool,
+    dim: bool,
+    italics: bool,
+    underscore: bool,
+    reverse: bool,
+    blink: bool,
+    strikethrough: bool,
+    hidden: bool,
 }
 
-const COLOR_NAMES: &[&str] = &[
-    "black",
-    "red",
-    "green",
-    "yellow",
-    "blue",
-    "magenta",
-    "cyan",
-    "white",
-    "bright-black",
-    "bright-red",
-    "bright-green",
-    "bright-yellow",
-    "bright-blue",
-    "bright-magenta",
-    "bright-cyan",
-    "bright-white",
-];
-
-fn parse_modules(json_blob: &str) -> Result<Vec<StarshipModule>> {
-    let modules: Vec<StarshipModule> = serde_json::from_str(json_blob)
-        .context("Expected JSON array from starship prompt --output=json")?;
-    Ok(modules)
+fn color_name_from_code(code: i32, bright: bool) -> Option<&'static str> {
+    match (bright, code) {
+        (false, 30) => Some("black"),
+        (false, 31) => Some("red"),
+        (false, 32) => Some("green"),
+        (false, 33) => Some("yellow"),
+        (false, 34) => Some("blue"),
+        (false, 35) => Some("magenta"),
+        (false, 36) => Some("cyan"),
+        (false, 37) => Some("white"),
+        (true, 90) => Some("bright-black"),
+        (true, 91) => Some("bright-red"),
+        (true, 92) => Some("bright-green"),
+        (true, 93) => Some("bright-yellow"),
+        (true, 94) => Some("bright-blue"),
+        (true, 95) => Some("bright-magenta"),
+        (true, 96) => Some("bright-cyan"),
+        (true, 97) => Some("bright-white"),
+        _ => None,
+    }
 }
 
-fn style_to_tmux(style: Option<&str>) -> String {
-    let Some(style) = style else {
-        return String::new();
-    };
-
-    let mut fg: Option<&str> = None;
-    let mut bg: Option<&str> = None;
-    let mut modifiers: Vec<&str> = Vec::new();
-
-    for token in style.split_whitespace() {
-        if let Some(value) = token.strip_prefix("fg:") {
-            if COLOR_NAMES.contains(&value) || value.starts_with('#') {
-                fg = Some(value);
+fn apply_color_sequence(params: &[&str], fg: bool, style: &mut Style) -> usize {
+    if params.len() >= 2 && params[0] == "5" {
+        if let Ok(n) = params[1].parse::<u8>() {
+            let colour = format!("colour{}", n);
+            if fg {
+                style.fg = Some(colour);
+            } else {
+                style.bg = Some(colour);
             }
-        } else if let Some(value) = token.strip_prefix("bg:") {
-            if COLOR_NAMES.contains(&value) || value.starts_with('#') {
-                bg = Some(value);
+        }
+        return 2;
+    }
+
+    if params.len() >= 4 && params[0] == "2" {
+        if let (Ok(r), Ok(g), Ok(b)) = (
+            params[1].parse::<u8>(),
+            params[2].parse::<u8>(),
+            params[3].parse::<u8>(),
+        ) {
+            let hex = format!("#{:02X}{:02X}{:02X}", r, g, b);
+            if fg {
+                style.fg = Some(hex);
+            } else {
+                style.bg = Some(hex);
             }
-        } else {
-            match token {
-                "bold" => modifiers.push("bold"),
-                "italic" => modifiers.push("italics"),
-                "underline" => modifiers.push("underscore"),
-                "dimmed" => modifiers.push("dim"),
-                "reverse" | "inverse" => modifiers.push("reverse"),
-                "blink" => modifiers.push("blink"),
-                "strikethrough" => modifiers.push("strikethrough"),
-                "hidden" => modifiers.push("hidden"),
-                _ => {}
+        }
+        return 4;
+    }
+
+    0
+}
+
+fn apply_sgr(params: &[&str], style: &mut Style) {
+    let mut idx = 0;
+    while idx < params.len() {
+        let p = params[idx];
+        idx += 1;
+
+        if p.is_empty() {
+            continue;
+        }
+
+        match p {
+            "0" => *style = Style::default(),
+            "1" => style.bold = true,
+            "2" => style.dim = true,
+            "3" => style.italics = true,
+            "4" => style.underscore = true,
+            "5" => style.blink = true,
+            "7" => style.reverse = true,
+            "8" => style.hidden = true,
+            "9" => style.strikethrough = true,
+            "22" => {
+                style.bold = false;
+                style.dim = false;
+            }
+            "23" => style.italics = false,
+            "24" => style.underscore = false,
+            "25" => style.blink = false,
+            "27" => style.reverse = false,
+            "28" => style.hidden = false,
+            "29" => style.strikethrough = false,
+            "39" => style.fg = None,
+            "49" => style.bg = None,
+            c => {
+                if let Ok(code) = c.parse::<i32>() {
+                    if let Some(name) = color_name_from_code(code, code >= 90) {
+                        if code >= 90 {
+                            style.fg = Some(name.to_string());
+                        } else if code >= 30 && code <= 37 {
+                            style.fg = Some(name.to_string());
+                        } else if code >= 100 && code <= 107 {
+                            style.bg = Some(name.to_string());
+                        } else if code >= 40 && code <= 47 {
+                            style.bg = Some(name.to_string());
+                        }
+                    } else if code == 38 {
+                        let consumed = apply_color_sequence(&params[idx..], true, style);
+                        idx += consumed;
+                    } else if code == 48 {
+                        let consumed = apply_color_sequence(&params[idx..], false, style);
+                        idx += consumed;
+                    }
+                }
             }
         }
     }
+}
 
+fn style_to_tmux(style: &Style) -> String {
     let mut parts: Vec<String> = Vec::new();
-    if let Some(fg) = fg {
+    if let Some(fg) = &style.fg {
         parts.push(format!("fg={}", fg));
     }
-    if let Some(bg) = bg {
+    if let Some(bg) = &style.bg {
         parts.push(format!("bg={}", bg));
     }
-    parts.extend(modifiers.iter().map(|m| m.to_string()));
+    if style.bold {
+        parts.push("bold".into());
+    }
+    if style.dim {
+        parts.push("dim".into());
+    }
+    if style.italics {
+        parts.push("italics".into());
+    }
+    if style.underscore {
+        parts.push("underscore".into());
+    }
+    if style.reverse {
+        parts.push("reverse".into());
+    }
+    if style.blink {
+        parts.push("blink".into());
+    }
+    if style.strikethrough {
+        parts.push("strikethrough".into());
+    }
+    if style.hidden {
+        parts.push("hidden".into());
+    }
 
     if parts.is_empty() {
         String::new()
@@ -88,26 +168,52 @@ fn style_to_tmux(style: Option<&str>) -> String {
     }
 }
 
-fn render_modules(modules: Vec<StarshipModule>) -> String {
+pub fn render_from_ansi(ansi: &str) -> String {
     let mut rendered = String::new();
-    for module in modules {
-        let content = if module.content.is_empty() {
-            module.text
-        } else {
-            module.content
-        };
-        let prefix = style_to_tmux(module.style.as_deref());
+    let mut style = Style::default();
+    let mut buffer = String::new();
+    let mut chars = ansi.chars().peekable();
+
+    while let Some(ch) = chars.next() {
+        if ch == '\u{1b}' {
+            if let Some('[') = chars.peek() {
+                chars.next();
+
+                if !buffer.is_empty() {
+                    let prefix = style_to_tmux(&style);
+                    if prefix.is_empty() {
+                        rendered.push_str(&buffer);
+                    } else {
+                        rendered.push_str(&format!("{}{}#[default]", prefix, buffer));
+                    }
+                    buffer.clear();
+                }
+
+                let mut code = String::new();
+                while let Some(c) = chars.next() {
+                    if c == 'm' {
+                        break;
+                    }
+                    code.push(c);
+                }
+                let params: Vec<&str> = code.split(';').collect();
+                apply_sgr(&params, &mut style);
+                continue;
+            }
+        }
+        buffer.push(ch);
+    }
+
+    if !buffer.is_empty() {
+        let prefix = style_to_tmux(&style);
         if prefix.is_empty() {
-            rendered.push_str(&content);
+            rendered.push_str(&buffer);
         } else {
-            rendered.push_str(&format!("{}{}#[default]", prefix, content));
+            rendered.push_str(&format!("{}{}#[default]", prefix, buffer));
         }
     }
-    rendered
-}
 
-pub fn render_from_json(json_blob: &str) -> Result<String> {
-    Ok(render_modules(parse_modules(json_blob)?))
+    rendered
 }
 
 fn tmux_env_vars(env: &HashMap<String, String>) -> Result<Vec<(String, String)>> {
@@ -201,8 +307,8 @@ pub fn run_starship(config: &ConfigResolution, env: &HashMap<String, String>) ->
 
     let output = Command::new("starship")
         .arg("prompt")
-        .arg("--output=json")
         .env("STARSHIP_CONFIG", &config.config_path)
+        .env("STARSHIP_SHELL", "sh")
         .envs(tmux_env)
         .output()
         .context("Failed to run starship prompt")?;

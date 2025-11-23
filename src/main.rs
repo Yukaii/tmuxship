@@ -52,8 +52,8 @@ fn main() -> Result<()> {
         return Ok(());
     }
 
-    let json = render::run_starship(&config, &env)?;
-    let rendered = render::render_from_json(&json)?;
+    let ansi = render::run_starship(&config, &env)?;
+    let rendered = render::render_from_ansi(&ansi);
     print!("{}", rendered);
     Ok(())
 }

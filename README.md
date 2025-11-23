@@ -26,8 +26,8 @@ Use `--config` to force a specific Starship config file for that invocation. Wit
 12. `$HOME/.config/starship/starship.toml`.
 
 ### Rendering flow
-1. Starship is executed with `starship prompt --output=json` under the resolved config path.
-2. Modules from the JSON output are mapped to tmux markup (`#[fg=...,bg=...,bold]`).
+1. Starship is executed with `starship prompt` under the resolved config path.
+2. ANSI styles from Starship output are translated to tmux markup (`#[fg=...,bg=...,bold]`).
 3. The concatenated result is written to stdout for use in `status-left`, `status-right`, or `status-format` slots.
 
 ### Passing tmux variables to Starship
