@@ -66,8 +66,8 @@ set -g status on
 set -g status-left-length 100
 set -g status-right-length 200
 
-set -g status-left  '#(TMUX_SHIP_TMUX_VARS="session_name,window_index,window_name" TMUX_SHIP_LEFT_CONFIG="$HOME/.tmux/starship.toml" STARSHIP_CONFIG= tmux-ship left)'
-set -g status-right '#(TMUX_SHIP_TMUX_VARS="session_name,window_index,window_name" TMUX_SHIP_RIGHT_CONFIG="$HOME/.tmux/.right.toml" STARSHIP_CONFIG= tmux-ship right)'
+set -g status-left  '#(TMUX_SHIP_TMUX_VARS="session_name,window_index,window_name" TMUX_SHIP_LEFT_CONFIG="$HOME/.tmux/starship.toml" tmux-ship left)'
+set -g status-right '#(TMUX_SHIP_TMUX_VARS="session_name,window_index,window_name" TMUX_SHIP_RIGHT_CONFIG="$HOME/.tmux/.right.toml" tmux-ship right)'
 
 set-hook -g client-session-changed 'run-shell "tmux refresh-client -S"'
 set-hook -g client-attached        'run-shell "tmux refresh-client -S"'
