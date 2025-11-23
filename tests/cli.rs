@@ -13,8 +13,18 @@ fn make_fake_starship(dir: &PathBuf) -> PathBuf {
         script,
 r#"#!/usr/bin/env bash
 
+if [[ "$1" != "prompt" ]]; then
+  echo "unexpected starship invocation: $@" >&2
+  exit 1
+fi
+
+if [[ "${{CLICOLOR_FORCE:-}}" != "1" ]]; then
+  echo "CLICOLOR_FORCE was not set" >&2
+  exit 1
+fi
+
 printf '\e[32m%s\e[0m\e[34m%s\e[0m%s\n' "${{STARSHIP_CONFIG}}" "${{TMUX_SESSION_NAME:-}}" "${{TMUX_WINDOW_INDEX:-}}"
-"#  
+"#
     )
     .unwrap();
     let mut perms = script.metadata().unwrap().permissions();
@@ -31,8 +41,7 @@ fn make_fake_tmux(dir: &PathBuf) -> PathBuf {
         r#"#!/usr/bin/env bash
 
 if [[ "$1" == "display-message" ]]; then
-  delimiter=$'\x1f'
-  printf "tmux-session%s9\n" "$delimiter"
+  printf "tmux-session\n9\n"
 else
   echo "unexpected tmux invocation: $@" >&2
   exit 1

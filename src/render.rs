@@ -244,12 +244,11 @@ fn tmux_env_vars(env: &HashMap<String, String>) -> Result<Vec<(String, String)>>
         }
     }
 
-    let delimiter = '\u{1f}';
     let format = vars
         .iter()
         .map(|v| format!("#{{{}}}", v))
         .collect::<Vec<_>>()
-        .join(&delimiter.to_string());
+        .join("\n");
 
     let output = Command::new("tmux")
         .arg("display-message")
@@ -268,17 +267,12 @@ fn tmux_env_vars(env: &HashMap<String, String>) -> Result<Vec<(String, String)>>
     }
 
     let stdout = String::from_utf8(output.stdout).context("tmux output was not UTF-8")?;
-    let values: Vec<String> = stdout
-        .split(delimiter)
-        .map(|value| value.trim_end_matches('\n').to_string())
-        .collect();
-
-    if values.len() != vars.len() {
-        return Err(anyhow!(
-            "Expected {} tmux values, got {}",
-            vars.len(),
-            values.len()
-        ));
+    let mut values: Vec<String> = stdout.lines().map(|v| v.to_string()).collect();
+    if values.len() < vars.len() {
+        values.resize(vars.len(), String::new());
+    }
+    if values.len() > vars.len() {
+        values.truncate(vars.len());
     }
 
     let env_vars = vars
@@ -309,6 +303,8 @@ pub fn run_starship(config: &ConfigResolution, env: &HashMap<String, String>) ->
         .arg("prompt")
         .env("STARSHIP_CONFIG", &config.config_path)
         .env("STARSHIP_SHELL", "sh")
+        // Force color even though stdout is not a TTY.
+        .env("CLICOLOR_FORCE", "1")
         .envs(tmux_env)
         .output()
         .context("Failed to run starship prompt")?;
