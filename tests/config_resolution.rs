@@ -88,6 +88,38 @@ fn xdg_config_home_is_used() {
 }
 
 #[test]
+fn tmux_config_dir_is_used() {
+    let dir = tempfile::tempdir().unwrap();
+    let tmux_root = dir.path().join(".config/tmux");
+    fs::create_dir_all(&tmux_root).unwrap();
+    let cfg = tmux_root.join("starship.toml");
+    fs::write(&cfg, "[tmux]\n").unwrap();
+
+    let env = env_with_home(dir.path());
+    let resolved = resolve_config(Side::Left, None, &env).unwrap();
+    assert_eq!(resolved.config_path, cfg);
+    assert_eq!(resolved.source, "tmux-global");
+}
+
+#[test]
+fn tmux_config_takes_priority_over_starship_dir() {
+    let dir = tempfile::tempdir().unwrap();
+    let starship_root = dir.path().join(".config/starship");
+    let tmux_root = dir.path().join(".config/tmux");
+    fs::create_dir_all(&starship_root).unwrap();
+    fs::create_dir_all(&tmux_root).unwrap();
+    let starship_cfg = starship_root.join(".left.toml");
+    let tmux_cfg = tmux_root.join(".left.toml");
+    fs::write(&starship_cfg, "[left]\n").unwrap();
+    fs::write(&tmux_cfg, "[tmux-left]\n").unwrap();
+
+    let env = env_with_home(dir.path());
+    let resolved = resolve_config(Side::Left, None, &env).unwrap();
+    assert_eq!(resolved.config_path, tmux_cfg);
+    assert_eq!(resolved.source, "tmux-side");
+}
+
+#[test]
 fn error_when_missing() {
     let dir = tempfile::tempdir().unwrap();
     let env = env_with_home(dir.path());

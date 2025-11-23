@@ -75,14 +75,21 @@ pub fn resolve_config(
         return Ok(ConfigResolution::new(side, expanded, "STARSHIP_CONFIG"));
     }
 
-    let mut candidate_dirs: Vec<PathBuf> = Vec::new();
+    let mut candidate_dirs: Vec<(PathBuf, &str)> = Vec::new();
     if let Some(xdg_config) = env.get("XDG_CONFIG_HOME") {
-        candidate_dirs.push(expand_user(Path::new(xdg_config)).join("starship"));
+        let xdg = expand_user(Path::new(xdg_config));
+        candidate_dirs.push((xdg.join("tmux"), "tmux"));
+        candidate_dirs.push((xdg.join("starship"), "starship"));
     }
     if let Some(home) = env.get("HOME") {
-        candidate_dirs.push(expand_user(Path::new(home)).join(".config/starship"));
+        let home = expand_user(Path::new(home));
+        candidate_dirs.push((home.join(".config/tmux"), "tmux"));
+        candidate_dirs.push((home.join(".tmux"), "tmux"));
+        candidate_dirs.push((home.join(".config/starship"), "starship"));
     } else if let Some(home_dir) = dirs::home_dir() {
-        candidate_dirs.push(home_dir.join(".config/starship"));
+        candidate_dirs.push((home_dir.join(".config/tmux"), "tmux"));
+        candidate_dirs.push((home_dir.join(".tmux"), "tmux"));
+        candidate_dirs.push((home_dir.join(".config/starship"), "starship"));
     }
 
     let side_filename = match side {
@@ -91,17 +98,19 @@ pub fn resolve_config(
         Side::Full => ".full.toml",
     };
 
-    for base in candidate_dirs {
+    for (base, kind) in candidate_dirs {
         if !base.exists() {
             continue;
         }
         let side_path = base.join(side_filename);
         if side_path.is_file() {
-            return Ok(ConfigResolution::new(side, side_path, "default-side"));
+            let source = if kind == "tmux" { "tmux-side" } else { "default-side" };
+            return Ok(ConfigResolution::new(side, side_path, source));
         }
         let global_path = base.join("starship.toml");
         if global_path.is_file() {
-            return Ok(ConfigResolution::new(side, global_path, "default-global"));
+            let source = if kind == "tmux" { "tmux-global" } else { "default-global" };
+            return Ok(ConfigResolution::new(side, global_path, source));
         }
     }
 

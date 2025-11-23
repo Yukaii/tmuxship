@@ -14,10 +14,16 @@ Use `--config` to force a specific Starship config file for that invocation. Wit
 
 1. `TMUX_SHIP_<SIDE>_CONFIG` for the requested side.
 2. `STARSHIP_CONFIG` (applies to all sides).
-3. `$XDG_CONFIG_HOME/starship/.<side>.toml`.
-4. `$XDG_CONFIG_HOME/starship/starship.toml`.
-5. `$HOME/.config/starship/.<side>.toml`.
-6. `$HOME/.config/starship/starship.toml`.
+3. `$XDG_CONFIG_HOME/tmux/.<side>.toml`.
+4. `$XDG_CONFIG_HOME/tmux/starship.toml`.
+5. `$XDG_CONFIG_HOME/starship/.<side>.toml`.
+6. `$XDG_CONFIG_HOME/starship/starship.toml`.
+7. `$HOME/.config/tmux/.<side>.toml`.
+8. `$HOME/.config/tmux/starship.toml`.
+9. `$HOME/.tmux/.<side>.toml`.
+10. `$HOME/.tmux/starship.toml`.
+11. `$HOME/.config/starship/.<side>.toml`.
+12. `$HOME/.config/starship/starship.toml`.
 
 ### Rendering flow
 1. Starship is executed with `starship prompt --output=json` under the resolved config path.
