@@ -1,6 +1,7 @@
 use crate::config::ConfigResolution;
 use anyhow::{anyhow, Context, Result};
 use serde::Deserialize;
+use std::collections::HashMap;
 use std::process::Command;
 
 #[derive(Debug, Deserialize, PartialEq)]
@@ -109,11 +110,100 @@ pub fn render_from_json(json_blob: &str) -> Result<String> {
     Ok(render_modules(parse_modules(json_blob)?))
 }
 
-pub fn run_starship(config: &ConfigResolution) -> Result<String> {
+fn tmux_env_vars(env: &HashMap<String, String>) -> Result<Vec<(String, String)>> {
+    let Some(raw_list) = env.get("TMUX_SHIP_TMUX_VARS") else {
+        return Ok(Vec::new());
+    };
+
+    let vars: Vec<String> = raw_list
+        .split(',')
+        .map(|v| v.trim())
+        .filter(|v| !v.is_empty())
+        .map(|v| v.to_string())
+        .collect();
+
+    if vars.is_empty() {
+        return Ok(Vec::new());
+    }
+
+    for var in &vars {
+        if !var
+            .chars()
+            .all(|c| c.is_ascii_alphanumeric() || c == '_')
+        {
+            return Err(anyhow!(
+                "TMUX_SHIP_TMUX_VARS contained an invalid tmux variable name: {}",
+                var
+            ));
+        }
+    }
+
+    let delimiter = '\u{1f}';
+    let format = vars
+        .iter()
+        .map(|v| format!("#{{{}}}", v))
+        .collect::<Vec<_>>()
+        .join(&delimiter.to_string());
+
+    let output = Command::new("tmux")
+        .arg("display-message")
+        .arg("-p")
+        .arg("-F")
+        .arg(format)
+        .output()
+        .context("Failed to query tmux for variables")?;
+
+    if !output.status.success() {
+        return Err(anyhow!(
+            "tmux exited with status {}: {}",
+            output.status,
+            String::from_utf8_lossy(&output.stderr)
+        ));
+    }
+
+    let stdout = String::from_utf8(output.stdout).context("tmux output was not UTF-8")?;
+    let values: Vec<String> = stdout
+        .split(delimiter)
+        .map(|value| value.trim_end_matches('\n').to_string())
+        .collect();
+
+    if values.len() != vars.len() {
+        return Err(anyhow!(
+            "Expected {} tmux values, got {}",
+            vars.len(),
+            values.len()
+        ));
+    }
+
+    let env_vars = vars
+        .iter()
+        .zip(values.iter())
+        .map(|(var, value)| {
+            let sanitized: String = var
+                .chars()
+                .map(|c| {
+                    if c.is_ascii_alphanumeric() {
+                        c.to_ascii_uppercase()
+                    } else {
+                        '_'
+                    }
+                })
+                .collect();
+            (format!("TMUX_{}", sanitized), value.to_string())
+        })
+        .collect();
+
+    Ok(env_vars)
+}
+
+pub fn run_starship(config: &ConfigResolution, env: &HashMap<String, String>) -> Result<String> {
+    let tmux_env = tmux_env_vars(env)?;
+
     let output = Command::new("starship")
         .arg("prompt")
         .arg("--output=json")
         .env("STARSHIP_CONFIG", &config.config_path)
+        .envs(tmux_env)
         .output()
         .context("Failed to run starship prompt")?;
 

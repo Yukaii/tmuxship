@@ -1,9 +1,9 @@
 mod config;
 mod render;
 
-use anyhow::{Context, Result};
+use anyhow::Result;
 use clap::{ArgAction, Parser, ValueEnum};
-use config::{resolve_config, ConfigResolution, Side};
+use config::{resolve_config, Side};
 use std::collections::HashMap;
 use std::env;
 use std::path::PathBuf;
@@ -52,7 +52,7 @@ fn main() -> Result<()> {
         return Ok(());
     }
 
-    let json = render::run_starship(&config)?;
+    let json = render::run_starship(&config, &env)?;
     let rendered = render::render_from_json(&json)?;
     print!("{}", rendered);
     Ok(())

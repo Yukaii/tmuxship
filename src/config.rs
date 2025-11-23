@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Context, Result};
+use anyhow::{anyhow, Result};
 use serde::Serialize;
 use shellexpand::tilde;
 use std::collections::HashMap;
@@ -106,7 +106,7 @@ pub fn resolve_config(
     }
 
     Err(anyhow!(
-        "Unable to locate a Starship config file for tmux-ship"
+        "Unable to locate a Starship config file for tmux-ship (side={:?})",
+        side
     ))
-    .with_context(|| format!("side={:?}", side))
 }

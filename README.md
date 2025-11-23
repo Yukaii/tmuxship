@@ -24,6 +24,25 @@ Use `--config` to force a specific Starship config file for that invocation. Wit
 2. Modules from the JSON output are mapped to tmux markup (`#[fg=...,bg=...,bold]`).
 3. The concatenated result is written to stdout for use in `status-left`, `status-right`, or `status-format` slots.
 
+### Passing tmux variables to Starship
+
+When you want Starship segments to react to tmux state (session name, window index, etc.), set
+`TMUX_SHIP_TMUX_VARS` to a comma-separated list of tmux format names (without the `#{}` wrapper). tmux-ship
+will fetch their values via `tmux display-message -p -F` and expose them to Starship as uppercase variables with a
+`TMUX_` prefix.
+
+Example:
+
+```
+# tmux status-left/right definition
+set -g status-left '#(TMUX_SHIP_TMUX_VARS="session_name,window_index" tmux-ship left)'
+
+# starship config snippet
+[env_var.tmux_session]
+variable = "TMUX_SESSION_NAME"
+format = " [# $env_value]($style)"
+```
+
 ## Development
 
 Run the Rust test suite with:
