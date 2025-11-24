@@ -60,43 +60,43 @@ cargo test
 
 ## tmux status configuration
 
-Example tmux config that uses tmux-ship for both status sides and refreshes immediately on common events (session/window/pane changes) so you don’t wait for `status-interval`:
+Example tmux config that uses tmux-ship for status lines and window status, with immediate refresh on common events:
 
 ```tmux
 set -g status on
 set -g status-left-length 100
 set -g status-right-length 200
+set -g status-justify centre
 
-set -g status-left  '#(TMUX_SHIP_TMUX_VARS="session_name,window_index,window_name,client_prefix,window_active,window_zoomed_flag" TMUX_SHIP_LEFT_CONFIG="$HOME/.tmux/starship.toml" tmux-ship left)'
-set -g status-right '#(TMUX_SHIP_TMUX_VARS="session_name,window_index,window_name,client_prefix,window_active,window_zoomed_flag" TMUX_SHIP_RIGHT_CONFIG="$HOME/.tmux/.right.toml" tmux-ship right)'
+# Set config paths as global env vars
+setenv -g TMUX_SHIP_LEFT_CONFIG   "$HOME/.tmux/starship.toml"
+setenv -g TMUX_SHIP_RIGHT_CONFIG  "$HOME/.tmux/.right.toml"
+setenv -g TMUX_SHIP_CENTER_CONFIG "$HOME/.tmux/.center.toml"
 
-set-hook -g client-session-changed 'run-shell "tmux refresh-client -S"'
-set-hook -g client-attached        'run-shell "tmux refresh-client -S"'
-set-hook -g pane-focus-in          'run-shell "tmux refresh-client -S"'
-set-hook -g window-pane-changed    'run-shell "tmux refresh-client -S"'
-set-hook -g window-layout-changed  'run-shell "tmux refresh-client -S"'
+# Statuslines via tmux-ship + Starship
+set -g status-left  '#(TMUX_PREFIX_LABEL="#{?client_prefix,#{session_name},}" TMUX_SESSION_NAME="#{session_name}" tmux-ship left)'
+set -g status-right '#(tmux-ship right)'
+
+# Refresh status on events
+set-hook -g client-session-changed 'refresh-client -S'
+set-hook -g client-attached        'refresh-client -S'
+set-hook -g pane-focus-in          'refresh-client -S'
+set-hook -g window-pane-changed    'refresh-client -S'
+set-hook -g window-layout-changed  'refresh-client -S'
+
+# Window status via tmux-ship center
+set -g window-status-separator " • "
+set -g window-status-style "bg=default,fg=default"
+set -g window-status-format        '#(TMUX_WINDOW_INDEX="#{window_index}" TMUX_WINDOW_NAME="#{window_name}" TMUX_WINDOW_ACTIVE="#{window_active}" TMUX_WINDOW_ZOOMED_FLAG="#{window_zoomed_flag}" tmux-ship center)'
+set -g window-status-current-format '#(TMUX_WINDOW_INDEX="#{window_index}" TMUX_WINDOW_NAME="#{window_name}" TMUX_WINDOW_ACTIVE="1" TMUX_WINDOW_ZOOMED_FLAG="#{window_zoomed_flag}" tmux-ship center)'
 
 # Optional: low idle interval for clock/long-running data
 set -g status-interval 2
 ```
 
 Notes:
-- Keep `tmux-ship` on your `PATH` (or replace `tmux-ship` above with an absolute path).
-- Adjust `TMUX_SHIP_TMUX_VARS` if you need additional tmux formats exposed to Starship.
-
-### Window status (center) with Starship
-
-To drive `window-status-format`/`window-status-current-format` with Starship, use the `center` side. Provide whatever tmux formats you need (e.g., `window_index`, `window_name`, `window_active`) via `TMUX_SHIP_TMUX_VARS`:
-
-```tmux
-set -g window-status-separator " "
-set -g window-status-style "bg=default,fg=default"
-
-set -g window-status-format '#(TMUX_SHIP_TMUX_VARS= TMUX_WINDOW_INDEX="#{window_index}" TMUX_WINDOW_NAME="#{window_name}" TMUX_WINDOW_ACTIVE="#{window_active}" TMUX_WINDOW_ZOOMED_FLAG="#{window_zoomed_flag}" TMUX_SHIP_CENTER_CONFIG="$HOME/.tmux/.center.toml" tmux-ship center)'
-set -g window-status-current-format '#(TMUX_SHIP_TMUX_VARS= TMUX_WINDOW_INDEX="#{window_index}" TMUX_WINDOW_NAME="#{window_name}" TMUX_WINDOW_ACTIVE="#{window_active}" TMUX_WINDOW_ZOOMED_FLAG="#{window_zoomed_flag}" TMUX_SHIP_CENTER_CONFIG="$HOME/.tmux/.center.toml" tmux-ship center)'
-
-set -g window-status-bell-style "bg=yellow,fg=black,bold"
-set -g window-status-activity-style "bg=cyan,fg=black"
-```
-
-Use a dedicated `~/.tmux/.center.toml` Starship config to format window entries. Incorporate `TMUX_WINDOW_ACTIVE` (and optionally `TMUX_WINDOW_ZOOMED_FLAG`) in your Starship modules to style the active/zoomed window differently. The example above injects the per-window values directly via tmux format expansion so each slot renders its own data.
+- Config paths are set once with `setenv -g` and read by tmux-ship automatically via `TMUX_SHIP_<SIDE>_CONFIG`
+- Pass tmux variables directly as environment variables (e.g., `TMUX_SESSION_NAME="#{session_name}"`)
+- `window-status-current-format` hardcodes `TMUX_WINDOW_ACTIVE="1"` since it's always the active window
+- Keep `tmux-ship` on your `PATH` (or use an absolute path)
+- Use a dedicated `~/.tmux/.center.toml` Starship config to format window entries with `TMUX_WINDOW_ACTIVE` and `TMUX_WINDOW_ZOOMED_FLAG` for active/zoomed styling
