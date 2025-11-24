@@ -358,14 +358,28 @@ fn tmux_env_vars(env: &HashMap<String, String>) -> Result<Vec<(String, String)>>
 pub fn run_starship(config: &ConfigResolution, env: &HashMap<String, String>) -> Result<String> {
     let tmux_env = tmux_env_vars(env)?;
 
-    let output = Command::new("starship")
-        .arg("prompt")
+    // Find the pane_current_path from the tmux environment variables
+    let current_dir = tmux_env
+        .iter()
+        .find(|(k, _)| k == "TMUX_PANE_CURRENT_PATH")
+        .map(|(_, v)| v.clone());
+
+    let mut cmd = Command::new("starship");
+    cmd.arg("prompt")
         .env("STARSHIP_CONFIG", &config.config_path)
         .env("STARSHIP_SHELL", "sh")
         // Force color even though stdout is not a TTY.
         .env("CLICOLOR_FORCE", "1")
-        .envs(tmux_env)
-        .output()
+        .envs(tmux_env);
+    
+    // Set the working directory if we have a pane_current_path
+    if let Some(dir) = current_dir {
+        if !dir.is_empty() {
+            cmd.current_dir(dir);
+        }
+    }
+
+    let output = cmd.output()
         .context("Failed to run starship prompt")?;
 
     if !output.status.success() {
