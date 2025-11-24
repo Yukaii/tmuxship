@@ -7,6 +7,7 @@ A thin Starship-to-tmux adapter that renders tmux-ready status lines from Starsh
 ```
 tmux-ship left [--config path]
 tmux-ship right [--config path]
+tmux-ship center [--config path]
 tmux-ship full [--config path]
 ```
 
@@ -66,8 +67,8 @@ set -g status on
 set -g status-left-length 100
 set -g status-right-length 200
 
-set -g status-left  '#(TMUX_SHIP_TMUX_VARS="session_name,window_index,window_name" TMUX_SHIP_LEFT_CONFIG="$HOME/.tmux/starship.toml" tmux-ship left)'
-set -g status-right '#(TMUX_SHIP_TMUX_VARS="session_name,window_index,window_name" TMUX_SHIP_RIGHT_CONFIG="$HOME/.tmux/.right.toml" tmux-ship right)'
+set -g status-left  '#(TMUX_SHIP_TMUX_VARS="session_name,window_index,window_name,client_prefix,window_active,window_zoomed_flag" TMUX_SHIP_LEFT_CONFIG="$HOME/.tmux/starship.toml" tmux-ship left)'
+set -g status-right '#(TMUX_SHIP_TMUX_VARS="session_name,window_index,window_name,client_prefix,window_active,window_zoomed_flag" TMUX_SHIP_RIGHT_CONFIG="$HOME/.tmux/.right.toml" tmux-ship right)'
 
 set-hook -g client-session-changed 'run-shell "tmux refresh-client -S"'
 set-hook -g client-attached        'run-shell "tmux refresh-client -S"'
@@ -82,3 +83,20 @@ set -g status-interval 2
 Notes:
 - Keep `tmux-ship` on your `PATH` (or replace `tmux-ship` above with an absolute path).
 - Adjust `TMUX_SHIP_TMUX_VARS` if you need additional tmux formats exposed to Starship.
+
+### Window status (center) with Starship
+
+To drive `window-status-format`/`window-status-current-format` with Starship, use the `center` side. Provide whatever tmux formats you need (e.g., `window_index`, `window_name`, `window_active`) via `TMUX_SHIP_TMUX_VARS`:
+
+```tmux
+set -g window-status-separator " "
+set -g window-status-style "bg=default,fg=default"
+
+set -g window-status-format '#(TMUX_SHIP_TMUX_VARS= TMUX_WINDOW_INDEX="#{window_index}" TMUX_WINDOW_NAME="#{window_name}" TMUX_WINDOW_ACTIVE="#{window_active}" TMUX_WINDOW_ZOOMED_FLAG="#{window_zoomed_flag}" TMUX_SHIP_CENTER_CONFIG="$HOME/.tmux/.center.toml" tmux-ship center)'
+set -g window-status-current-format '#(TMUX_SHIP_TMUX_VARS= TMUX_WINDOW_INDEX="#{window_index}" TMUX_WINDOW_NAME="#{window_name}" TMUX_WINDOW_ACTIVE="#{window_active}" TMUX_WINDOW_ZOOMED_FLAG="#{window_zoomed_flag}" TMUX_SHIP_CENTER_CONFIG="$HOME/.tmux/.center.toml" tmux-ship center)'
+
+set -g window-status-bell-style "bg=yellow,fg=black,bold"
+set -g window-status-activity-style "bg=cyan,fg=black"
+```
+
+Use a dedicated `~/.tmux/.center.toml` Starship config to format window entries. Incorporate `TMUX_WINDOW_ACTIVE` (and optionally `TMUX_WINDOW_ZOOMED_FLAG`) in your Starship modules to style the active/zoomed window differently. The example above injects the per-window values directly via tmux format expansion so each slot renders its own data.

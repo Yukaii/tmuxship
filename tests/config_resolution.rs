@@ -120,6 +120,20 @@ fn tmux_config_takes_priority_over_starship_dir() {
 }
 
 #[test]
+fn center_side_uses_side_specific_file() {
+    let dir = tempfile::tempdir().unwrap();
+    let config_root = dir.path().join(".config/starship");
+    fs::create_dir_all(&config_root).unwrap();
+    let center = config_root.join(".center.toml");
+    fs::write(&center, "[center]\n").unwrap();
+
+    let env = env_with_home(dir.path());
+    let resolved = resolve_config(Side::Center, None, &env).unwrap();
+    assert_eq!(resolved.config_path, center);
+    assert_eq!(resolved.source, "default-side");
+}
+
+#[test]
 fn error_when_missing() {
     let dir = tempfile::tempdir().unwrap();
     let env = env_with_home(dir.path());

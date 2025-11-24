@@ -9,6 +9,7 @@ pub enum Side {
     Left,
     Right,
     Full,
+    Center,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
@@ -51,6 +52,7 @@ pub fn resolve_config(
         Side::Left => "LEFT",
         Side::Right => "RIGHT",
         Side::Full => "FULL",
+        Side::Center => "CENTER",
     };
 
     if let Some(path) = override_path {
@@ -96,6 +98,7 @@ pub fn resolve_config(
         Side::Left => ".left.toml",
         Side::Right => ".right.toml",
         Side::Full => ".full.toml",
+        Side::Center => ".center.toml",
     };
 
     for (base, kind) in candidate_dirs {

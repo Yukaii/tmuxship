@@ -217,6 +217,19 @@ pub fn render_from_ansi(ansi: &str) -> String {
 }
 
 fn tmux_env_vars(env: &HashMap<String, String>) -> Result<Vec<(String, String)>> {
+    let target = env.get("TMUX_SHIP_TARGET").map(|t| t.as_str());
+    if let Some(t) = target {
+        if !t
+            .chars()
+            .all(|c| c.is_ascii_graphic() && !c.is_whitespace())
+        {
+            return Err(anyhow!(
+                "TMUX_SHIP_TARGET contained invalid characters: {}",
+                t
+            ));
+        }
+    }
+
     let Some(raw_list) = env.get("TMUX_SHIP_TMUX_VARS") else {
         return Ok(Vec::new());
     };
@@ -250,13 +263,13 @@ fn tmux_env_vars(env: &HashMap<String, String>) -> Result<Vec<(String, String)>>
         .collect::<Vec<_>>()
         .join("\n");
 
-    let output = Command::new("tmux")
-        .arg("display-message")
-        .arg("-p")
-        .arg("-F")
-        .arg(format)
-        .output()
-        .context("Failed to query tmux for variables")?;
+    let mut cmd = Command::new("tmux");
+    cmd.arg("display-message").arg("-p").arg("-F").arg(format);
+    if let Some(target) = target {
+        cmd.arg("-t").arg(target);
+    }
+
+    let output = cmd.output().context("Failed to query tmux for variables")?;
 
     if !output.status.success() {
         return Err(anyhow!(

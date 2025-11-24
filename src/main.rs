@@ -11,7 +11,7 @@ use std::path::PathBuf;
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Cli {
-    /// Which side to render (left, right, full)
+    /// Which side to render (left, right, center, full)
     side: CliSide,
 
     /// Force a specific Starship config file for this invocation only
@@ -27,6 +27,7 @@ struct Cli {
 enum CliSide {
     Left,
     Right,
+    Center,
     Full,
 }
 
@@ -35,6 +36,7 @@ impl From<CliSide> for Side {
         match value {
             CliSide::Left => Side::Left,
             CliSide::Right => Side::Right,
+            CliSide::Center => Side::Center,
             CliSide::Full => Side::Full,
         }
     }
