@@ -3,8 +3,10 @@ name = "tmuxship"
 version = "0.1.0"
 edition = "2021"
 description = "A Starship-to-tmux adapter that renders tmux-ready status lines from Starship JSON output"
-authors = ["tmuxship contributors"]
+authors = ["Yukai Huang <yukai@yukaihuang.com>"]
 license = "MIT"
+repository = "https://github.com/Yukaii/tmuxship"
+homepage = "https://github.com/Yukaii/tmuxship"
 
 [dependencies]
 anyhow = "1"
