@@ -1,9 +1,9 @@
 [package]
-name = "tmux-ship"
+name = "tmuxship"
 version = "0.1.0"
 edition = "2021"
 description = "A Starship-to-tmux adapter that renders tmux-ready status lines from Starship JSON output"
-authors = ["tmux-ship contributors"]
+authors = ["tmuxship contributors"]
 license = "MIT"
 
 [dependencies]

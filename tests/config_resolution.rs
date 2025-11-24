@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
 
-use tmux_ship::config::{resolve_config, Side};
+use tmuxship::config::{resolve_config, Side};
 
 fn env_with_home(base: &Path) -> HashMap<String, String> {
     let mut env = HashMap::new();

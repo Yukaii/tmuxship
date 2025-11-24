@@ -1,17 +1,17 @@
-# tmux-ship
+# tmuxship
 
 A thin Starship-to-tmux adapter that renders tmux-ready status lines from Starship JSON output.
 
 ## CLI
 
 ```
-tmux-ship left [--config path]
-tmux-ship right [--config path]
-tmux-ship center [--config path]
-tmux-ship full [--config path]
+tmuxship left [--config path]
+tmuxship right [--config path]
+tmuxship center [--config path]
+tmuxship full [--config path]
 ```
 
-Use `--config` to force a specific Starship config file for that invocation. Without it, tmux-ship resolves configs in this order:
+Use `--config` to force a specific Starship config file for that invocation. Without it, tmuxship resolves configs in this order:
 
 1. `TMUX_SHIP_<SIDE>_CONFIG` for the requested side.
 2. `STARSHIP_CONFIG` (applies to all sides).
@@ -33,7 +33,7 @@ Use `--config` to force a specific Starship config file for that invocation. Wit
 
 ### Automatic tmux variables
 
-**By default**, tmux-ship automatically fetches common tmux variables and exposes them to Starship as uppercase environment variables with a `TMUX_` prefix. This means you can use tmux state in your Starship config without any additional configuration:
+**By default**, tmuxship automatically fetches common tmux variables and exposes them to Starship as uppercase environment variables with a `TMUX_` prefix. This means you can use tmux state in your Starship config without any additional configuration:
 
 ```toml
 # starship config - just use the variables directly!
@@ -65,7 +65,7 @@ If you need different variables or want to reduce overhead, set `TMUX_SHIP_TMUX_
 
 ```
 # Only fetch specific variables
-set -g status-left '#(TMUX_SHIP_TMUX_VARS="session_name,window_index" tmux-ship left)'
+set -g status-left '#(TMUX_SHIP_TMUX_VARS="session_name,window_index" tmuxship left)'
 ```
 
 ## Development
@@ -78,7 +78,7 @@ cargo test
 
 ## tmux status configuration
 
-Example tmux config that uses tmux-ship for status lines and window status, with immediate refresh on common events:
+Example tmux config that uses tmuxship for status lines and window status, with immediate refresh on common events:
 
 ```tmux
 set -g status on
@@ -91,9 +91,9 @@ setenv -g TMUX_SHIP_LEFT_CONFIG   "$HOME/.tmux/starship.toml"
 setenv -g TMUX_SHIP_RIGHT_CONFIG  "$HOME/.tmux/.right.toml"
 setenv -g TMUX_SHIP_CENTER_CONFIG "$HOME/.tmux/.center.toml"
 
-# Statuslines via tmux-ship + Starship (variables are auto-fetched)
-set -g status-left  '#(tmux-ship left)'
-set -g status-right '#(tmux-ship right)'
+# Statuslines via tmuxship + Starship (variables are auto-fetched)
+set -g status-left  '#(tmuxship left)'
+set -g status-right '#(tmuxship right)'
 
 # Refresh status on events
 set-hook -g client-session-changed 'refresh-client -S'
@@ -102,18 +102,18 @@ set-hook -g pane-focus-in          'refresh-client -S'
 set-hook -g window-pane-changed    'refresh-client -S'
 set-hook -g window-layout-changed  'refresh-client -S'
 
-# Window status via tmux-ship center (variables are auto-fetched)
+# Window status via tmuxship center (variables are auto-fetched)
 set -g window-status-separator " • "
 set -g window-status-style "bg=default,fg=default"
-set -g window-status-format        '#(tmux-ship center)'
-set -g window-status-current-format '#(tmux-ship center)'
+set -g window-status-format        '#(tmuxship center)'
+set -g window-status-current-format '#(tmuxship center)'
 
 # Optional: low idle interval for clock/long-running data
 set -g status-interval 2
 ```
 
 Notes:
-- Config paths are set once with `setenv -g` and read by tmux-ship automatically via `TMUX_SHIP_<SIDE>_CONFIG`
+- Config paths are set once with `setenv -g` and read by tmuxship automatically via `TMUX_SHIP_<SIDE>_CONFIG`
 - tmux variables are automatically fetched and available as `TMUX_*` environment variables in your Starship config
-- Keep `tmux-ship` on your `PATH` (or use an absolute path)
+- Keep `tmuxship` on your `PATH` (or use an absolute path)
 - Use a dedicated `~/.tmux/.center.toml` Starship config to format window entries with `TMUX_WINDOW_ACTIVE` and `TMUX_WINDOW_ZOOMED_FLAG` for active/zoomed styling

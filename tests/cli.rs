@@ -88,7 +88,7 @@ fn cli_renders_using_resolved_config() {
     fs::create_dir_all(&fake_bin_dir).unwrap();
     make_fake_starship(&fake_bin_dir);
 
-    let mut cmd = Command::cargo_bin("tmux-ship").unwrap();
+    let mut cmd = Command::cargo_bin("tmuxship").unwrap();
     cmd.arg("left")
         .env("HOME", dir.path())
         .env(
@@ -117,7 +117,7 @@ fn cli_honors_config_flag() {
     fs::create_dir_all(&fake_bin_dir).unwrap();
     make_fake_starship(&fake_bin_dir);
 
-    let output = Command::cargo_bin("tmux-ship")
+    let output = Command::cargo_bin("tmuxship")
         .unwrap()
         .args(["right", "--config", cfg.to_string_lossy().as_ref()])
         .env(
@@ -150,7 +150,7 @@ fn cli_exports_tmux_vars_to_starship() {
     make_fake_starship(&fake_bin_dir);
     make_fake_tmux(&fake_bin_dir);
 
-    let output = Command::cargo_bin("tmux-ship")
+    let output = Command::cargo_bin("tmuxship")
         .unwrap()
         .arg("full")
         .env("HOME", dir.path())
@@ -190,7 +190,7 @@ fn cli_uses_tmux_target_when_provided() {
 
     let target = "@42";
 
-    Command::cargo_bin("tmux-ship")
+    Command::cargo_bin("tmuxship")
         .unwrap()
         .arg("center")
         .env("HOME", dir.path())
@@ -225,7 +225,7 @@ fn cli_center_side_uses_env_and_tmux_vars() {
     make_fake_starship(&fake_bin_dir);
     make_fake_tmux(&fake_bin_dir);
 
-    let output = Command::cargo_bin("tmux-ship")
+    let output = Command::cargo_bin("tmuxship")
         .unwrap()
         .arg("center")
         .env("HOME", dir.path())

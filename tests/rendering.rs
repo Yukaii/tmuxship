@@ -1,4 +1,4 @@
-use tmux_ship::render::render_from_ansi;
+use tmuxship::render::render_from_ansi;
 
 #[test]
 fn renders_styles_and_plain_text() {

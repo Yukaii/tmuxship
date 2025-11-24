@@ -118,7 +118,7 @@ pub fn resolve_config(
     }
 
     Err(anyhow!(
-        "Unable to locate a Starship config file for tmux-ship (side={:?})",
+        "Unable to locate a Starship config file for tmuxship (side={:?})",
         side
     ))
 }
