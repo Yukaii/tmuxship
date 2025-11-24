@@ -216,6 +216,50 @@ pub fn render_from_ansi(ansi: &str) -> String {
     rendered
 }
 
+fn default_tmux_vars() -> Vec<String> {
+    vec![
+        // Session variables
+        "session_name".to_string(),
+        "session_id".to_string(),
+        "session_created".to_string(),
+        "session_attached".to_string(),
+        "session_windows".to_string(),
+        // Window variables
+        "window_id".to_string(),
+        "window_index".to_string(),
+        "window_name".to_string(),
+        "window_active".to_string(),
+        "window_flags".to_string(),
+        "window_layout".to_string(),
+        "window_panes".to_string(),
+        "window_width".to_string(),
+        "window_height".to_string(),
+        "window_zoomed_flag".to_string(),
+        // Pane variables
+        "pane_id".to_string(),
+        "pane_index".to_string(),
+        "pane_title".to_string(),
+        "pane_current_path".to_string(),
+        "pane_current_command".to_string(),
+        "pane_pid".to_string(),
+        "pane_width".to_string(),
+        "pane_height".to_string(),
+        "pane_active".to_string(),
+        "pane_at_top".to_string(),
+        "pane_at_bottom".to_string(),
+        "pane_at_left".to_string(),
+        "pane_at_right".to_string(),
+        // Client variables
+        "client_prefix".to_string(),
+        "client_width".to_string(),
+        "client_height".to_string(),
+        "client_termname".to_string(),
+        // Host variables
+        "host".to_string(),
+        "host_short".to_string(),
+    ]
+}
+
 fn tmux_env_vars(env: &HashMap<String, String>) -> Result<Vec<(String, String)>> {
     let target = env.get("TMUX_SHIP_TARGET").map(|t| t.as_str());
     if let Some(t) = target {
@@ -230,16 +274,18 @@ fn tmux_env_vars(env: &HashMap<String, String>) -> Result<Vec<(String, String)>>
         }
     }
 
-    let Some(raw_list) = env.get("TMUX_SHIP_TMUX_VARS") else {
-        return Ok(Vec::new());
+    let vars: Vec<String> = if let Some(raw_list) = env.get("TMUX_SHIP_TMUX_VARS") {
+        // User explicitly specified variables
+        raw_list
+            .split(',')
+            .map(|v| v.trim())
+            .filter(|v| !v.is_empty())
+            .map(|v| v.to_string())
+            .collect()
+    } else {
+        // Auto-fetch default set of common tmux variables
+        default_tmux_vars()
     };
-
-    let vars: Vec<String> = raw_list
-        .split(',')
-        .map(|v| v.trim())
-        .filter(|v| !v.is_empty())
-        .map(|v| v.to_string())
-        .collect();
 
     if vars.is_empty() {
         return Ok(Vec::new());
