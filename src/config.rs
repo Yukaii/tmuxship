@@ -107,12 +107,20 @@ pub fn resolve_config(
         }
         let side_path = base.join(side_filename);
         if side_path.is_file() {
-            let source = if kind == "tmux" { "tmux-side" } else { "default-side" };
+            let source = if kind == "tmux" {
+                "tmux-side"
+            } else {
+                "default-side"
+            };
             return Ok(ConfigResolution::new(side, side_path, source));
         }
         let global_path = base.join("starship.toml");
         if global_path.is_file() {
-            let source = if kind == "tmux" { "tmux-global" } else { "default-global" };
+            let source = if kind == "tmux" {
+                "tmux-global"
+            } else {
+                "default-global"
+            };
             return Ok(ConfigResolution::new(side, global_path, source));
         }
     }

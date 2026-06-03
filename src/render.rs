@@ -292,10 +292,7 @@ fn tmux_env_vars(env: &HashMap<String, String>) -> Result<Vec<(String, String)>>
     }
 
     for var in &vars {
-        if !var
-            .chars()
-            .all(|c| c.is_ascii_alphanumeric() || c == '_')
-        {
+        if !var.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
             return Err(anyhow!(
                 "TMUX_SHIP_TMUX_VARS contained an invalid tmux variable name: {}",
                 var
@@ -371,7 +368,7 @@ pub fn run_starship(config: &ConfigResolution, env: &HashMap<String, String>) ->
         // Force color even though stdout is not a TTY.
         .env("CLICOLOR_FORCE", "1")
         .envs(tmux_env);
-    
+
     // Set the working directory if we have a pane_current_path
     if let Some(dir) = current_dir {
         if !dir.is_empty() {
@@ -379,8 +376,7 @@ pub fn run_starship(config: &ConfigResolution, env: &HashMap<String, String>) ->
         }
     }
 
-    let output = cmd.output()
-        .context("Failed to run starship prompt")?;
+    let output = cmd.output().context("Failed to run starship prompt")?;
 
     if !output.status.success() {
         return Err(anyhow!(
