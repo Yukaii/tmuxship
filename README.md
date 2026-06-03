@@ -149,6 +149,7 @@ set -g status on
 set -g status-left-length 100
 set -g status-right-length 200
 set -g status-justify centre
+set -g focus-events on
 
 # Set config paths as global env vars
 setenv -g TMUX_SHIP_LEFT_CONFIG   "$HOME/.tmux/starship.toml"
@@ -162,15 +163,17 @@ set -g status-right '#(tmuxship right)'
 # Refresh status on events
 set-hook -g client-session-changed 'refresh-client -S'
 set-hook -g client-attached        'refresh-client -S'
+set-hook -g client-focus-in        'refresh-client -S'
 set-hook -g pane-focus-in          'refresh-client -S'
 set-hook -g window-pane-changed    'refresh-client -S'
 set-hook -g window-layout-changed  'refresh-client -S'
 
 # Window status via tmuxship center (variables are auto-fetched)
+# Pass the window ID so tmuxship queries the correct window for each entry
 set -g window-status-separator " • "
 set -g window-status-style "bg=default,fg=default"
-set -g window-status-format        '#(tmuxship center)'
-set -g window-status-current-format '#(tmuxship center)'
+set -g window-status-format        '#(TMUX_SHIP_TARGET="#{window_id}" tmuxship center)'
+set -g window-status-current-format '#(TMUX_SHIP_TARGET="#{window_id}" tmuxship center)'
 
 # Optional: low idle interval for clock/long-running data
 set -g status-interval 2
@@ -181,6 +184,7 @@ set -g status-interval 2
 - Config paths are set once with `setenv -g` and read by tmuxship automatically
 - All tmux variables are automatically available as `TMUX_*` environment variables
 - Keep `tmuxship` on your `PATH` (or use an absolute path in tmux config)
+- Use `TMUX_SHIP_TARGET` to force tmuxship to query a specific tmux target (e.g. `#{window_id}` inside `window-status-format`)
 - Use separate configs for each side to customize left/right/center status independently
 - Use refresh hooks to update status immediately when switching windows/panes
 
@@ -194,6 +198,17 @@ By default, tmuxship fetches common tmux variables. To reduce overhead or fetch 
 # Only fetch specific variables
 set -g status-left '#(TMUX_SHIP_TMUX_VARS="session_name,window_index" tmuxship left)'
 ```
+
+### Targeting specific tmux contexts
+
+`tmuxship` uses tmux's default formatting context when querying variables. In places like `window-status-format`, that default is the *active* window, so every entry can show the same data. Override the target by setting `TMUX_SHIP_TARGET` to a tmux format such as `#{window_id}` or `#{pane_id}`:
+
+```tmux
+set -g window-status-format        '#(TMUX_SHIP_TARGET="#{window_id}" tmuxship center)'
+set -g window-status-current-format '#(TMUX_SHIP_TARGET="#{window_id}" tmuxship center)'
+```
+
+When tmux renders each window, `#{window_id}` is expanded before the command runs, so tmuxship gets data for the correct window and session.
 
 ### Config resolution
 

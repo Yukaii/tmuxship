@@ -110,6 +110,7 @@ set -g status on
 set -g status-left-length 100
 set -g status-right-length 200
 set -g status-justify centre
+set -g focus-events on
 
 # Set config paths
 setenv -g TMUX_SHIP_LEFT_CONFIG   "$HOME/.tmux/starship.toml"
@@ -120,17 +121,20 @@ setenv -g TMUX_SHIP_CENTER_CONFIG "$HOME/.tmux/.center.toml"
 set -g status-left  '#(tmuxship left)'
 set -g status-right '#(tmuxship right)'
 
-# Window status
+# Window status (pass the window ID so tmuxship queries the correct window)
 set -g window-status-separator " • "
-set -g window-status-format        '#(tmuxship center)'
-set -g window-status-current-format '#(tmuxship center)'
+set -g window-status-format        '#(TMUX_SHIP_TARGET="#{window_id}" tmuxship center)'
+set -g window-status-current-format '#(TMUX_SHIP_TARGET="#{window_id}" tmuxship center)'
 
 # Refresh on events
 set-hook -g client-session-changed 'refresh-client -S'
 set-hook -g client-attached        'refresh-client -S'
+set-hook -g client-focus-in        'refresh-client -S'
 set-hook -g pane-focus-in          'refresh-client -S'
 set-hook -g window-pane-changed    'refresh-client -S'
 
 # Periodic refresh (optional)
 set -g status-interval 2
 ```
+
+`TMUX_SHIP_TARGET` overrides the tmux target that tmuxship queries. Passing `#{window_id}` inside `window-status-format` ensures each entry renders data for its own window instead of always using the active one.
