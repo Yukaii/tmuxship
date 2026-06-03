@@ -121,7 +121,8 @@ setenv -g TMUX_SHIP_CENTER_CONFIG "$HOME/.tmux/.center.toml"
 run-shell 'tmuxship apply'
 
 # Generic window status options
-set -g window-status-separator " • "
+set -g window-status-separator "#[default] • #[default]"
+set -g window-status-style "bg=default,fg=default"
 
 # Refresh on events
 set-hook -g client-session-changed 'refresh-client -S'
