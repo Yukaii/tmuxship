@@ -116,6 +116,7 @@ set -g focus-events on
 setenv -g TMUX_SHIP_LEFT_CONFIG   "$HOME/.tmux/starship.toml"
 setenv -g TMUX_SHIP_RIGHT_CONFIG  "$HOME/.tmux/.right.toml"
 setenv -g TMUX_SHIP_CENTER_CONFIG "$HOME/.tmux/.center.toml"
+setenv -g TMUX_SHIP_WINDOW_SEPARATOR " • "
 
 # Generate status-left, status-right, and window status options
 run-shell 'tmuxship apply'

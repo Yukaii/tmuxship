@@ -95,6 +95,10 @@ fn shell_quote(value: &str) -> String {
 
 pub fn emit_tmux_conf(env: &HashMap<String, String>) -> Result<Vec<TmuxOption>> {
     let mut options = Vec::new();
+    let window_separator = env
+        .get("TMUX_SHIP_WINDOW_SEPARATOR")
+        .map(|value| value.as_str())
+        .unwrap_or(" • ");
 
     if let Some(left) = read_starship_config(Side::Left, env)? {
         if let (Some(prefix), Some(normal)) = (
@@ -122,7 +126,7 @@ pub fn emit_tmux_conf(env: &HashMap<String, String>) -> Result<Vec<TmuxOption>> 
         if let Some(inactive) = custom_style(&center, "window_inactive") {
             options.push(TmuxOption {
                 name: "window-status-separator".to_string(),
-                value: format!("{} • #[default]", inactive),
+                value: format!("{}{}#[default]", inactive, window_separator),
             });
 
             options.push(TmuxOption {

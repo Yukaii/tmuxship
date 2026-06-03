@@ -160,6 +160,7 @@ set -g focus-events on
 setenv -g TMUX_SHIP_LEFT_CONFIG   "$HOME/.tmux/starship.toml"
 setenv -g TMUX_SHIP_RIGHT_CONFIG  "$HOME/.tmux/.right.toml"
 setenv -g TMUX_SHIP_CENTER_CONFIG "$HOME/.tmux/.center.toml"
+setenv -g TMUX_SHIP_WINDOW_SEPARATOR " • "
 
 # Generate status-left, status-right, and window status options.
 # This keeps tmux-native values synchronous while preserving Starship-managed styles.
@@ -206,7 +207,7 @@ tmuxship emit-tmux-conf
 The generator currently recognizes these custom module names:
 
 - `prefix_active` and `session_normal` from the left config to generate `status-left` around tmux-native `#S`
-- `window_active`, `window_inactive`, and static `window_zoom` from the center config to generate window status around tmux-native `#I`, `#W`, and `#{window_zoomed_flag}`. The separator uses `window_inactive` style, and generated dotbar-style titles use `###I` internally so tmux renders a literal `#` followed by the window index.
+- `window_active`, `window_inactive`, and static `window_zoom` from the center config to generate window status around tmux-native `#I`, `#W`, and `#{window_zoomed_flag}`. `TMUX_SHIP_WINDOW_SEPARATOR` controls separator text and is wrapped with `window_inactive` style. Generated dotbar-style titles use `###I` internally so tmux renders a literal `#` followed by the window index.
 - the right config remains runtime-rendered as `#(tmuxship right)` for shell-driven modules such as battery
 
 The generated config is equivalent to writing tmux options by hand, but keeps the colors and styles in your Starship TOML. For example, `prefix_active` and `session_normal` generate a `status-left` that wraps tmux-native `#S` instead of asking Starship to print `${TMUX_SESSION_NAME}`.

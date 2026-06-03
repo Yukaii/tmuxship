@@ -345,6 +345,31 @@ fn cli_emits_tmux_conf_from_starship_styles() {
 }
 
 #[test]
+fn cli_emits_configurable_window_separator_with_inactive_style() {
+    let dir = tempdir().unwrap();
+    let config_root = dir.path().join(".config/tmux");
+    write_generator_configs(&config_root);
+
+    let output = Command::cargo_bin("tmuxship")
+        .unwrap()
+        .arg("emit-tmux-conf")
+        .env("HOME", dir.path())
+        .env("TMUX_SHIP_WINDOW_SEPARATOR", " | ")
+        .env_remove("TMUX_SHIP_LEFT_CONFIG")
+        .env_remove("TMUX_SHIP_RIGHT_CONFIG")
+        .env_remove("TMUX_SHIP_CENTER_CONFIG")
+        .env_remove("STARSHIP_CONFIG")
+        .assert()
+        .success()
+        .get_output()
+        .stdout
+        .clone();
+
+    let stdout = String::from_utf8(output).unwrap();
+    assert!(stdout.contains("set -g window-status-separator '#[fg=#475266] | #[default]'"));
+}
+
+#[test]
 fn cli_apply_sets_generated_tmux_options() {
     let dir = tempdir().unwrap();
     let config_root = dir.path().join(".config/tmux");
