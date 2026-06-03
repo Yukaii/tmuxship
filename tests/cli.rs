@@ -44,11 +44,16 @@ expected_target="${{TMUX_SHIP_EXPECT_TARGET:-}}"
 
 if [[ "$1" == "display-message" ]]; then
   target=""
+  format=""
   shift
   while [[ $# -gt 0 ]]; do
     case "$1" in
       -t)
         target="$2"
+        shift 2
+        ;;
+      -F)
+        format="$2"
         shift 2
         ;;
       *)
@@ -62,7 +67,19 @@ if [[ "$1" == "display-message" ]]; then
     exit 1
   fi
 
-  printf "tmux-session\n9\n"
+  while IFS= read -r line; do
+    case "$line" in
+      *session_name*)
+        printf "tmux-session\n"
+        ;;
+      *window_index*)
+        printf "9\n"
+        ;;
+      *)
+        printf "\n"
+        ;;
+    esac
+  done <<< "$format"
 else
   echo "unexpected tmux invocation: $@" >&2
   exit 1
@@ -160,6 +177,7 @@ fn cli_renders_using_resolved_config() {
             ),
         )
         .env("STARSHIP_CACHE", dir.path())
+        .env("TMUX_SHIP_TMUX_VARS", "")
         .env_remove("TMUX_SHIP_LEFT_CONFIG")
         .env_remove("STARSHIP_CONFIG");
 
@@ -189,6 +207,7 @@ fn cli_honors_config_flag() {
                 std::env::var("PATH").unwrap()
             ),
         )
+        .env("TMUX_SHIP_TMUX_VARS", "")
         .assert()
         .success()
         .get_output()
