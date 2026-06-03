@@ -1,0 +1,139 @@
+name: Bump Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Exact version to release, without leading v. Leave blank to use bump."
+        required: false
+        type: string
+      bump:
+        description: "Version bump to apply when version is blank"
+        required: true
+        type: choice
+        default: patch
+        options:
+          - patch
+          - minor
+          - major
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.RELEASE_TOKEN || github.token }}
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Validate version
+        id: version
+        run: |
+          input_version="${{ inputs.version }}"
+          bump="${{ inputs.bump }}"
+
+          if [[ -n "$input_version" ]]; then
+            version="$input_version"
+          else
+            current="$(cargo metadata --no-deps --format-version 1 | python3 -c 'import json,sys; print(json.load(sys.stdin)["packages"][0]["version"])')"
+            IFS=. read -r major minor patch_extra <<< "$current"
+            patch="${patch_extra%%[-+]*}"
+
+            case "$bump" in
+              patch)
+                patch=$((patch + 1))
+                ;;
+              minor)
+                minor=$((minor + 1))
+                patch=0
+                ;;
+              major)
+                major=$((major + 1))
+                minor=0
+                patch=0
+                ;;
+              *)
+                echo "Unsupported bump: $bump" >&2
+                exit 1
+                ;;
+            esac
+
+            version="$major.$minor.$patch"
+          fi
+
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+([+-][0-9A-Za-z.-]+)?$ ]]; then
+            echo "Version must be SemVer without a leading v, got: $version" >&2
+            exit 1
+          fi
+
+          if git rev-parse "v$version" >/dev/null 2>&1; then
+            echo "Tag v$version already exists" >&2
+            exit 1
+          fi
+
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Bump Cargo version
+        run: |
+          version="${{ steps.version.outputs.version }}"
+          python3 - <<'PY'
+          from pathlib import Path
+          import os
+
+          version = os.environ["VERSION"]
+          path = Path("Cargo.toml")
+          lines = path.read_text().splitlines(keepends=True)
+
+          in_package = False
+          changed = False
+          for index, line in enumerate(lines):
+              stripped = line.strip()
+              if stripped == "[package]":
+                  in_package = True
+                  continue
+              if in_package and stripped.startswith("["):
+                  break
+              if in_package and stripped.startswith("version ="):
+                  lines[index] = f'version = "{version}"\n'
+                  changed = True
+                  break
+
+          if not changed:
+              raise SystemExit("Could not find [package] version in Cargo.toml")
+
+          path.write_text("".join(lines))
+          PY
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+
+      - name: Update lockfile
+        run: cargo generate-lockfile
+
+      - name: Commit and tag
+        run: |
+          version="${{ steps.version.outputs.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git diff --exit-code -- Cargo.toml Cargo.lock && {
+            echo "No version changes to commit" >&2
+            exit 1
+          }
+
+          git add Cargo.toml Cargo.lock
+          git commit -m "chore: bump version to $version"
+          git tag -a "v$version" -m "v$version"
+
+      - name: Push commit and tag
+        run: |
+          version="${{ steps.version.outputs.version }}"
+          git push origin HEAD:${{ github.ref_name }}
+          git push origin "v$version"
