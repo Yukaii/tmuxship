@@ -1,6 +1,6 @@
 [package]
 name = "tmuxship"
-version = "0.1.2"
+version = "0.1.3"
 edition = "2021"
 description = "A Starship-to-tmux adapter that renders tmux-ready status lines from Starship JSON output"
 authors = ["Yukai Huang <yukai@yukaihuang.com>"]
