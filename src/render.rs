@@ -106,13 +106,9 @@ fn apply_sgr(params: &[&str], style: &mut Style) {
             c => {
                 if let Ok(code) = c.parse::<i32>() {
                     if let Some(name) = color_name_from_code(code, code >= 90) {
-                        if code >= 90 {
+                        if code >= 90 || (30..=37).contains(&code) {
                             style.fg = Some(name.to_string());
-                        } else if code >= 30 && code <= 37 {
-                            style.fg = Some(name.to_string());
-                        } else if code >= 100 && code <= 107 {
-                            style.bg = Some(name.to_string());
-                        } else if code >= 40 && code <= 47 {
+                        } else if (40..=47).contains(&code) || (100..=107).contains(&code) {
                             style.bg = Some(name.to_string());
                         }
                     } else if code == 38 {
@@ -190,7 +186,7 @@ pub fn render_from_ansi(ansi: &str) -> String {
                 }
 
                 let mut code = String::new();
-                while let Some(c) = chars.next() {
+                for c in chars.by_ref() {
                     if c == 'm' {
                         break;
                     }
