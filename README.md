@@ -7,25 +7,31 @@ A thin [Starship](https://starship.rs) adapter for tmux that renders beautiful, 
 
 Use the full power of Starship to style your tmux status bar, with automatic access to tmux session, window, pane, and client information as environment variables.
 
+![tmux status bar rendered by tmuxship](screenshots/full-bar.svg)
+
 ## Features
 
-- **Full Starship support** — Use any Starship module, prompt, or theme in your tmux status bar
-- **Automatic tmux context** — Session, window, pane, and client variables exposed as `TMUX_*` environment variables
-- **Per-side configuration** — Separate Starship config files for left, right, and center (window) status
-- **Prefix highlighting** — Style your status bar differently when the prefix key is active
-- **Zero boilerplate** — No wrapper scripts or complex tmux format strings required
+- **Full Starship compatibility** — Use any Starship module, prompt, or theme in your tmux status bar.
+- **Rich tmux context** — Session, window, pane, and client variables are automatically injected as `TMUX_*` environment variables.
+- **Per-side configuration** — Separate Starship configs for `status-left`, `status-right`, and `window-status` (center).
+- **Prefix highlighting** — Style your status bar differently when the tmux prefix key is active.
+- **Zero boilerplate** — No wrapper scripts or complex tmux format strings required.
 
-![tmux status bar rendered by tmuxship](screenshots/full-bar.svg)
+## Prerequisites
+
+- [tmux](https://github.com/tmux/tmux) 3.0+
+- [Starship](https://starship.rs) installed on your system
+- [Rust](https://www.rust-lang.org/tools/install) (if installing from source or crates.io)
 
 ## Quick Start
 
-**1. Install tmuxship**
+### 1. Install
 
 ```bash
 cargo install tmuxship
 ```
 
-**2. Copy the example configs**
+### 2. Copy example configs
 
 ```bash
 cp examples/starship.toml ~/.tmux/starship.toml
@@ -33,7 +39,9 @@ cp examples/.right.toml   ~/.tmux/.right.toml
 cp examples/.center.toml  ~/.tmux/.center.toml
 ```
 
-**3. Add to `~/.tmux.conf`**
+### 3. Configure tmux
+
+Add to `~/.tmux.conf`:
 
 ```tmux
 setenv -g TMUX_SHIP_LEFT_CONFIG   "$HOME/.tmux/starship.toml"
@@ -43,31 +51,28 @@ setenv -g TMUX_SHIP_CENTER_CONFIG "$HOME/.tmux/.center.toml"
 run-shell 'tmuxship apply'
 ```
 
-**4. Reload tmux**
+### 4. Reload
 
 ```bash
 tmux source ~/.tmux.conf
 ```
 
-See the [examples/](examples/) directory for complete configuration samples.
+---
 
-## Installation
+## How It Works
 
-### From crates.io
+The recommended way to use tmuxship is `tmuxship apply`, which runs once at startup and converts your Starship TOML styles into native tmux `status-left`, `status-right`, and `window-status` options. This is fast, flicker-free, and requires no background processes.
 
-```bash
-cargo install tmuxship
-```
+For segments that need live data (battery, git status, frequently updating clocks), you can fall back to **runtime rendering** with `#(tmuxship <side>)`. This runs every `status-interval`, injects `TMUX_*` env vars, calls Starship, and converts ANSI colors to tmux format strings.
 
-### From source
+| Mode | When to use |
+|---|---|
+| **`tmuxship apply`** (preferred) | Colors, session name, window list, host — anything that changes on tmux events | 
+| **`#(tmuxship <side>)`** | Live data that changes outside of tmux (battery, git status, external APIs) |
 
-```bash
-cargo install --path .
-```
+You can mix both modes: use `tmuxship apply` for the frame, and override a single side with runtime rendering when needed.
 
-## Usage
-
-### Commands
+### Available Commands
 
 | Command | Description |
 |---|---|
@@ -75,15 +80,19 @@ cargo install --path .
 | `tmuxship right` | Render the right status segment |
 | `tmuxship center` | Render the window status segment |
 | `tmuxship full` | Render all segments |
-| `tmuxship emit-tmux-conf` | Print the generated tmux config |
+| `tmuxship emit-tmux-conf` | Print the generated tmux config (dry-run) |
 | `tmuxship apply` | Apply the generated config to the running tmux server |
 
-### Config Resolution
+---
 
-tmuxship resolves Starship config files in the following order (where `<side>` is `left`, `right`, or `center`):
+## Configuration
+
+### Config File Resolution
+
+tmuxship resolves Starship config files for each side (`left`, `right`, `center`) in the following order:
 
 1. `--config` flag
-2. `TMUX_SHIP_<SIDE>_CONFIG` (e.g. `TMUX_SHIP_LEFT_CONFIG`)
+2. `TMUX_SHIP_<SIDE>_CONFIG` environment variable (e.g. `TMUX_SHIP_LEFT_CONFIG`)
 3. `STARSHIP_CONFIG`
 4. `$XDG_CONFIG_HOME/tmux/.<side>.toml`
 5. `$XDG_CONFIG_HOME/tmux/starship.toml`
@@ -96,62 +105,86 @@ tmuxship resolves Starship config files in the following order (where `<side>` i
 12. `$HOME/.config/starship/.<side>.toml`
 13. `$HOME/.config/starship/starship.toml`
 
-### Available tmux Variables
+### Complete tmux.conf Example
 
-All tmux variables are automatically injected into the Starship environment with a `TMUX_` prefix.
+```tmux
+set -g status on
+set -g status-left-length 100
+set -g status-right-length 200
+set -g status-justify centre
+set -g focus-events on
 
-**Session**
+# Config paths for each status segment
+setenv -g TMUX_SHIP_LEFT_CONFIG   "$HOME/.tmux/starship.toml"
+setenv -g TMUX_SHIP_RIGHT_CONFIG  "$HOME/.tmux/.right.toml"
+setenv -g TMUX_SHIP_CENTER_CONFIG "$HOME/.tmux/.center.toml"
+setenv -g TMUX_SHIP_WINDOW_SEPARATOR " • "
 
-| Variable | Description |
-|---|---|
-| `TMUX_SESSION_NAME` | Current session name |
-| `TMUX_SESSION_ID` | Session ID |
-| `TMUX_SESSION_CREATED` | Session creation timestamp |
-| `TMUX_SESSION_ATTACHED` | Number of attached clients |
-| `TMUX_SESSION_WINDOWS` | Number of windows |
+# Generate status-left, status-right, and window-status options from Starship configs.
+# Styles come from Starship TOML; tmux-native format strings (#S, #I, #W) render the values.
+run-shell 'tmuxship apply'
 
-**Window**
+# Refresh the status bar on relevant tmux events
+set-hook -g client-session-changed 'refresh-client -S'
+set-hook -g client-attached        'refresh-client -S'
+set-hook -g pane-focus-in          'refresh-client -S'
 
-| Variable | Description |
-|---|---|
-| `TMUX_WINDOW_ID` | Window ID |
-| `TMUX_WINDOW_INDEX` | Window index |
-| `TMUX_WINDOW_NAME` | Window name |
-| `TMUX_WINDOW_ACTIVE` | `1` if active, `0` otherwise |
-| `TMUX_WINDOW_FLAGS` | Window flags |
-| `TMUX_WINDOW_LAYOUT` | Window layout |
-| `TMUX_WINDOW_PANES` | Number of panes |
-| `TMUX_WINDOW_WIDTH` / `TMUX_WINDOW_HEIGHT` | Window dimensions |
-| `TMUX_WINDOW_ZOOMED_FLAG` | `1` if zoomed, `0` otherwise |
+set -g window-status-style "bg=default,fg=default"
 
-**Pane**
+# Default refresh interval (1 minute is plenty for static styling)
+set -g status-interval 60
+```
 
-| Variable | Description |
-|---|---|
-| `TMUX_PANE_ID` | Pane ID |
-| `TMUX_PANE_INDEX` | Pane index |
-| `TMUX_PANE_TITLE` | Pane title |
-| `TMUX_PANE_CURRENT_PATH` | Current working directory |
-| `TMUX_PANE_CURRENT_COMMAND` | Running command |
-| `TMUX_PANE_PID` | Process ID |
-| `TMUX_PANE_WIDTH` / `TMUX_PANE_HEIGHT` | Pane dimensions |
-| `TMUX_PANE_ACTIVE` | `1` if active, `0` otherwise |
-| `TMUX_PANE_AT_TOP` / `TMUX_PANE_AT_BOTTOM` / `TMUX_PANE_AT_LEFT` / `TMUX_PANE_AT_RIGHT` | Edge position flags |
+**Key points:**
 
-**Client**
+- Config paths are set once with `setenv -g` and picked up automatically by tmuxship.
+- `tmuxship apply` generates tmux options from Starship custom module styles, keeping color definitions in TOML.
+- Runtime `#(tmuxship right)` still injects `TMUX_*` environment variables for shell-driven modules.
+- Keep `tmuxship` on your `PATH`, or use an absolute path in your tmux config.
 
-| Variable | Description |
-|---|---|
-| `TMUX_CLIENT_PREFIX` | `1` if prefix key is active, `0` otherwise |
-| `TMUX_CLIENT_WIDTH` / `TMUX_CLIENT_HEIGHT` | Terminal dimensions |
-| `TMUX_CLIENT_TERMNAME` | Terminal name |
+#### Optional: Extra Hooks for Focus Events
 
-**Host**
+Some terminals or older tmux versions skip certain hooks. If your status bar feels stale on focus changes, uncomment these:
 
-| Variable | Description |
-|---|---|
-| `TMUX_HOST` | Full hostname |
-| `TMUX_HOST_SHORT` | Short hostname |
+```tmux
+# Refresh on focus transitions
+# bind-key -n FocusIn  refresh-client -S
+# bind-key -n FocusOut refresh-client -S
+
+# Additional hooks (uncomment if needed)
+# set-hook -g client-focus-in        'refresh-client -S'
+# set-hook -g client-focus-out       'refresh-client -S'
+# set-hook -g after-select-window    'refresh-client -S'
+# set-hook -g after-new-window       'refresh-client -S'
+# set-hook -g window-pane-changed    'refresh-client -S'
+# set-hook -g window-layout-changed  'refresh-client -S'
+```
+
+### Runtime Rendering (Escape Hatch)
+
+If you need live data that `tmuxship apply` cannot capture (battery, git status, etc.), override a specific side with runtime rendering:
+
+```tmux
+set -g status-right '#(tmuxship right)'
+set -g window-status-format         '#(TMUX_SHIP_TARGET="#{window_id}" tmuxship center)'
+set -g window-status-current-format '#(TMUX_SHIP_TARGET="#{window_id}" tmuxship center)'
+```
+
+Set `TMUX_SHIP_TARGET` to a tmux format string like `#{window_id}` so tmuxship queries data for the correct window rather than the active one.
+
+To inspect what `tmuxship apply` would generate before applying:
+
+```bash
+tmuxship emit-tmux-conf
+```
+
+**Recognized custom module names for generated config:**
+
+- `prefix_active` and `session_normal` (left config) → generates `status-left` around tmux-native `#S`
+- `window_active`, `window_inactive`, `window_zoom` (center config) → generates window status around `#I`, `#W`, and `#{window_zoomed_flag}`; separator text is controlled by `TMUX_SHIP_WINDOW_SEPARATOR`
+- Right config is always runtime-rendered as `#(tmuxship right)`
+
+---
 
 ## Examples
 
@@ -170,6 +203,7 @@ All tmux variables are automatically injected into the Starship environment with
 The session name is subtle in normal state and gets a bright green background when you press the tmux prefix key.
 
 `starship.toml` (set via `TMUX_SHIP_LEFT_CONFIG`):
+
 ```toml
 "$schema" = 'https://starship.rs/config-schema.json'
 format = "$custom"
@@ -199,6 +233,7 @@ style = "fg:#565B66"
 Active windows get a bold, highlighted style. Inactive windows are muted. Zoomed windows show an indicator.
 
 `.center.toml` (set via `TMUX_SHIP_CENTER_CONFIG`):
+
 ```toml
 format = "$custom"
 add_newline = false
@@ -227,6 +262,7 @@ format = " $output"
 ![right status](screenshots/right.svg)
 
 `.right.toml` (set via `TMUX_SHIP_RIGHT_CONFIG`):
+
 ```toml
 "$schema" = 'https://starship.rs/config-schema.json'
 
@@ -261,6 +297,7 @@ style = "fg:#CBA6F7"
 Combine built-in Starship modules with custom tmux-aware modules for a rich left status.
 
 `advanced-left.toml`:
+
 ```toml
 "$schema" = 'https://starship.rs/config-schema.json'
 
@@ -292,7 +329,7 @@ truncate_to_repo = true
 # Git branch
 [git_branch]
 format = "on [$symbol$branch]($style) "
-symbol = " "
+symbol = ""
 style = "fg:#A6E3A1"
 
 # Git status indicators
@@ -301,75 +338,70 @@ format = '([\[$all_status$ahead_behind\]]($style) )'
 style = "fg:#F9E2AF"
 ```
 
-See [examples/](examples/) for all available configuration samples.
+See the [examples/](examples/) directory for all available configuration samples.
 
-## tmux Configuration
+---
 
-A complete `~/.tmux.conf` example using tmuxship:
+## Available tmux Variables
 
-```tmux
-set -g status on
-set -g status-left-length 100
-set -g status-right-length 200
-set -g status-justify centre
-set -g focus-events on
+All tmux variables are automatically injected into the Starship environment with a `TMUX_` prefix.
 
-# Config paths for each status segment
-setenv -g TMUX_SHIP_LEFT_CONFIG   "$HOME/.tmux/starship.toml"
-setenv -g TMUX_SHIP_RIGHT_CONFIG  "$HOME/.tmux/.right.toml"
-setenv -g TMUX_SHIP_CENTER_CONFIG "$HOME/.tmux/.center.toml"
-setenv -g TMUX_SHIP_WINDOW_SEPARATOR " • "
+### Session
 
-# Generate status-left, status-right, and window-status options from Starship configs.
-# Styles come from Starship TOML; tmux-native format strings (#S, #I, #W) render the values.
-run-shell 'tmuxship apply'
+| Variable | Description |
+|---|---|
+| `TMUX_SESSION_NAME` | Current session name |
+| `TMUX_SESSION_ID` | Session ID |
+| `TMUX_SESSION_CREATED` | Session creation timestamp |
+| `TMUX_SESSION_ATTACHED` | Number of attached clients |
+| `TMUX_SESSION_WINDOWS` | Number of windows |
 
-# Refresh the status bar on relevant tmux events
-set-hook -g client-session-changed 'refresh-client -S'
-set-hook -g client-attached        'refresh-client -S'
-set-hook -g client-focus-in        'refresh-client -S'
-set-hook -g pane-focus-in          'refresh-client -S'
-set-hook -g window-pane-changed    'refresh-client -S'
-set-hook -g window-layout-changed  'refresh-client -S'
+### Window
 
-set -g window-status-style "bg=default,fg=default"
+| Variable | Description |
+|---|---|
+| `TMUX_WINDOW_ID` | Window ID |
+| `TMUX_WINDOW_INDEX` | Window index |
+| `TMUX_WINDOW_NAME` | Window name |
+| `TMUX_WINDOW_ACTIVE` | `1` if active, `0` otherwise |
+| `TMUX_WINDOW_FLAGS` | Window flags |
+| `TMUX_WINDOW_LAYOUT` | Window layout |
+| `TMUX_WINDOW_PANES` | Number of panes |
+| `TMUX_WINDOW_WIDTH` / `TMUX_WINDOW_HEIGHT` | Window dimensions |
+| `TMUX_WINDOW_ZOOMED_FLAG` | `1` if zoomed, `0` otherwise |
 
-# Optional: lower interval for clock or frequently changing data
-set -g status-interval 2
-```
+### Pane
 
-**Key points:**
+| Variable | Description |
+|---|---|
+| `TMUX_PANE_ID` | Pane ID |
+| `TMUX_PANE_INDEX` | Pane index |
+| `TMUX_PANE_TITLE` | Pane title |
+| `TMUX_PANE_CURRENT_PATH` | Current working directory |
+| `TMUX_PANE_CURRENT_COMMAND` | Running command |
+| `TMUX_PANE_PID` | Process ID |
+| `TMUX_PANE_WIDTH` / `TMUX_PANE_HEIGHT` | Pane dimensions |
+| `TMUX_PANE_ACTIVE` | `1` if active, `0` otherwise |
+| `TMUX_PANE_AT_TOP` / `TMUX_PANE_AT_BOTTOM` / `TMUX_PANE_AT_LEFT` / `TMUX_PANE_AT_RIGHT` | Edge position flags |
 
-- Config paths are set once with `setenv -g` and picked up automatically by tmuxship
-- `tmuxship apply` generates tmux options from Starship custom module styles, keeping color definitions in TOML
-- Runtime `#(tmuxship right)` still injects `TMUX_*` environment variables for shell-driven modules
-- Keep `tmuxship` on your `PATH`, or use an absolute path in your tmux config
+### Client
 
-### Generated Config vs. Runtime Rendering
+| Variable | Description |
+|---|---|
+| `TMUX_CLIENT_PREFIX` | `1` if prefix key is active, `0` otherwise |
+| `TMUX_CLIENT_WIDTH` / `TMUX_CLIENT_HEIGHT` | Terminal dimensions |
+| `TMUX_CLIENT_TERMNAME` | Terminal name |
 
-`tmuxship apply` generates static tmux options at startup. For segments that need live data (battery, git status, etc.), use runtime rendering instead:
+### Host
 
-```tmux
-set -g status-right '#(tmuxship right)'
-set -g window-status-format         '#(TMUX_SHIP_TARGET="#{window_id}" tmuxship center)'
-set -g window-status-current-format '#(TMUX_SHIP_TARGET="#{window_id}" tmuxship center)'
-```
+| Variable | Description |
+|---|---|
+| `TMUX_HOST` | Full hostname |
+| `TMUX_HOST_SHORT` | Short hostname |
 
-Set `TMUX_SHIP_TARGET` to a tmux format string like `#{window_id}` so tmuxship queries data for the correct window rather than the active one.
+---
 
-To inspect what `tmuxship apply` would generate before applying:
-
-```bash
-tmuxship emit-tmux-conf
-```
-
-**Recognized custom module names for generated config:**
-
-- `prefix_active` and `session_normal` (left config) → generates `status-left` around tmux-native `#S`
-- `window_active`, `window_inactive`, `window_zoom` (center config) → generates window status around `#I`, `#W`, and `#{window_zoomed_flag}`; separator text is controlled by `TMUX_SHIP_WINDOW_SEPARATOR`
-- Right config is always runtime-rendered as `#(tmuxship right)`
-
-## Advanced Configuration
+## Advanced
 
 ### Limiting Fetched Variables
 
@@ -379,13 +411,15 @@ By default, tmuxship fetches all common tmux variables. To reduce overhead, spec
 set -g status-left '#(TMUX_SHIP_TMUX_VARS="session_name,window_index" tmuxship left)'
 ```
 
-### How It Works
+### Rendering Pipeline
 
-1. tmux invokes tmuxship via `#(tmuxship left)` (or another side)
-2. tmuxship queries tmux and exposes variables as `TMUX_*` environment variables
-3. Starship is executed with the resolved config file
-4. ANSI color codes from Starship output are converted to tmux format strings
-5. The result is written to stdout for tmux to render
+1. tmux invokes tmuxship via `#(tmuxship left)` (or another side).
+2. tmuxship queries tmux and exposes variables as `TMUX_*` environment variables.
+3. Starship is executed with the resolved config file.
+4. ANSI color codes from Starship output are converted to tmux format strings.
+5. The result is written to stdout for tmux to render.
+
+---
 
 ## Contributing
 
