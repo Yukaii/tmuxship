@@ -38,7 +38,13 @@ See the [examples/](examples/) directory for more configuration options.
 
 ## Installation
 
-### From source (requires Rust)
+### With Cargo
+
+```bash
+cargo install tmuxship
+```
+
+### From local source (requires Rust)
 
 ```bash
 cargo install --path .
