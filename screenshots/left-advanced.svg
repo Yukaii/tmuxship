@@ -1,0 +1,24 @@
+<svg width="60ch" height="1.3em" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve">
+    <style>
+        * {
+            font-family: Courier, monospace;
+            font-size: 13px;
+        }
+        tspan, text {
+            font-variant-ligatures: none;
+            dominant-baseline: central;
+            white-space: pre;
+            fill: #bbbbbb;
+        }
+        .bg {
+            stroke-width: "0.5px";
+        }
+        <!-- Foreground custom colors -->
+        .fc0 { fill: #565b66; }
+        .fc1 { fill: #89b4fa; }
+        .fc2 { fill: #a6e3a1; }
+        .fc3 { fill: #f9e2af; }
+    </style>
+    <rect width="100%" height="100%" x="0" y="0" style="fill: #000000"/>
+<text x="0ch" y="0.65em"><tspan class="fc0">󰇄 dev </tspan><tspan class="fc1">tmux-ship </tspan><tspan>on  </tspan><tspan class="fc2">main </tspan><tspan class="fc3">[!?] </tspan></text>
+</svg>

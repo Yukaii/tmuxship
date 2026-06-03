@@ -15,6 +15,8 @@ Use the full power of Starship to style your tmux status bar, with automatic acc
 - **Prefix highlighting** — Style your status bar differently when the prefix key is active
 - **Zero boilerplate** — No wrapper scripts or complex tmux format strings required
 
+![tmux status bar rendered by tmuxship](screenshots/full-bar.svg)
+
 ## Quick Start
 
 **1. Install tmuxship**
@@ -153,8 +155,21 @@ All tmux variables are automatically injected into the Starship environment with
 
 ## Examples
 
-### Session name with prefix highlighting
+### Full status bar
 
+![tmux status bar rendered by tmuxship](screenshots/full-bar.svg)
+
+*Left: session name · Center: window list (active highlighted) · Right: time, host, window count*
+
+### Left status — session with prefix highlighting
+
+| Normal | Prefix active |
+|---|---|
+| ![left normal](screenshots/left-normal.svg) | ![left prefix](screenshots/left-prefix.svg) |
+
+The session name is subtle in normal state and gets a bright green background when you press the tmux prefix key.
+
+`starship.toml` (set via `TMUX_SHIP_LEFT_CONFIG`):
 ```toml
 "$schema" = 'https://starship.rs/config-schema.json'
 format = "$custom"
@@ -175,8 +190,15 @@ format = "[$output]($style) "
 style = "fg:#565B66"
 ```
 
-### Window status with active/inactive styling
+### Center — window list with active/inactive styling
 
+| Active | Inactive | Zoomed |
+|---|---|---|
+| ![window active](screenshots/window-active.svg) | ![window inactive](screenshots/window-inactive.svg) | ![window zoomed](screenshots/window-zoom.svg) |
+
+Active windows get a bold, highlighted style. Inactive windows are muted. Zoomed windows show an indicator.
+
+`.center.toml` (set via `TMUX_SHIP_CENTER_CONFIG`):
 ```toml
 format = "$custom"
 add_newline = false
@@ -192,9 +214,94 @@ when = 'test "${TMUX_WINDOW_ACTIVE:-0}" != "1"'
 command = 'printf "%s:%s" "${TMUX_WINDOW_INDEX}" "${TMUX_WINDOW_NAME}"'
 format = "[$output]($style)"
 style = "fg:#6C7086"
+
+# Optional: show an icon when the active window is zoomed
+[custom.window_zoom]
+when = 'test "${TMUX_WINDOW_ACTIVE:-0}" = "1" && test "${TMUX_WINDOW_ZOOMED_FLAG:-0}" = "1"'
+command = 'printf "🔍"'
+format = " $output"
 ```
 
-See [examples/](examples/) for more complete configurations.
+### Right — time, host, and window count
+
+![right status](screenshots/right.svg)
+
+`.right.toml` (set via `TMUX_SHIP_RIGHT_CONFIG`):
+```toml
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = "$time$custom"
+add_newline = false
+
+[time]
+disabled = false
+format = "[$time]($style) "
+style = "fg:#89B4FA"
+time_format = "%H:%M:%S"
+
+[custom.host]
+when = "true"
+shell = "bash"
+command = 'printf "%s" "${TMUX_HOST_SHORT:-$(hostname -s)}"'
+format = "on [$output]($style) "
+style = "fg:#A6E3A1"
+
+[custom.window_count]
+when = "true"
+shell = "bash"
+command = 'printf "%s" "${TMUX_SESSION_WINDOWS}"'
+format = "[󰖲 $output]($style)"
+style = "fg:#CBA6F7"
+```
+
+### Advanced left — session, git branch, and directory
+
+![advanced left](screenshots/left-advanced.svg)
+
+Combine built-in Starship modules with custom tmux-aware modules for a rich left status.
+
+`advanced-left.toml`:
+```toml
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = "$custom$directory$git_branch$git_status"
+add_newline = false
+
+# Session name with prefix highlighting
+[custom.session_prefix]
+shell = "bash"
+when = 'test "${TMUX_CLIENT_PREFIX:-0}" = "1"'
+command = 'printf "󰇄 %s" "${TMUX_SESSION_NAME:-?}"'
+format = "[$output]($style) "
+style = "bg:#95E6CB fg:#1E1E2E bold"
+
+[custom.session_normal]
+shell = "bash"
+when = 'test "${TMUX_CLIENT_PREFIX:-0}" != "1"'
+command = 'printf "󰇄 %s" "${TMUX_SESSION_NAME:-?}"'
+format = "[$output]($style) "
+style = "fg:#565B66"
+
+# Current directory (from the active pane's CWD)
+[directory]
+format = "[$path]($style) "
+style = "fg:#89B4FA"
+truncation_length = 3
+truncate_to_repo = true
+
+# Git branch
+[git_branch]
+format = "on [$symbol$branch]($style) "
+symbol = " "
+style = "fg:#A6E3A1"
+
+# Git status indicators
+[git_status]
+format = '([\[$all_status$ahead_behind\]]($style) )'
+style = "fg:#F9E2AF"
+```
+
+See [examples/](examples/) for all available configuration samples.
 
 ## tmux Configuration
 
@@ -289,6 +396,20 @@ Contributions are welcome. Please see [CONTRIBUTING.md](CONTRIBUTING.md) for det
 ```bash
 cargo test
 ```
+
+#### Generating Screenshots
+
+Screenshots are generated from Starship ANSI output using [ansisvg](https://github.com/wader/ansisvg):
+
+```bash
+# Install ansisvg (requires Go)
+go install github.com/wader/ansisvg@latest
+
+# Generate screenshots from example configs
+./scripts/generate-screenshots.sh
+```
+
+Output SVGs are placed in `screenshots/`.
 
 ## License
 

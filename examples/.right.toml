@@ -15,6 +15,7 @@ time_format = "%H:%M:%S"
 
 # Host information
 [custom.host]
+when = "true"
 shell = "bash"
 command = 'printf "%s" "${TMUX_HOST_SHORT:-$(hostname -s)}"'
 format = "on [$output]($style) "
@@ -22,6 +23,7 @@ style = "fg:#A6E3A1"
 
 # Window count
 [custom.window_count]
+when = "true"
 shell = "bash"
 command = 'printf "%s" "${TMUX_SESSION_WINDOWS:-?}"'
 format = "[󰖲 $output]($style)"
