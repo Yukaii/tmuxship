@@ -339,8 +339,9 @@ fn cli_emits_tmux_conf_from_starship_styles() {
     let stdout = String::from_utf8(output).unwrap();
     assert!(stdout.contains("set -g status-left '#{?client_prefix,#[bg=#95E6CB,bold]#S #[default],#[fg=#565B66]#S #[default]}'"));
     assert!(stdout.contains("set -g status-right '#(tmuxship right)'"));
-    assert!(stdout.contains("set -g window-status-format '#[fg=#475266]##I #W #[default]'"));
-    assert!(stdout.contains(&format!("set -g window-status-current-format '#[fg=#BFBDB6,bold]##I #W #{{?window_zoomed_flag,#[fg=#39BAE6]{} #[default],}}#[default]'", "\u{f293}")));
+    assert!(stdout.contains("set -g window-status-separator '#[fg=#475266] • #[default]'"));
+    assert!(stdout.contains("set -g window-status-format '#[fg=#475266]###I #W #[default]'"));
+    assert!(stdout.contains(&format!("set -g window-status-current-format '#[fg=#BFBDB6,bold]###I #W #{{?window_zoomed_flag,#[fg=#39BAE6]{} #[default],}}#[default]'", "\u{f293}")));
 }
 
 #[test]

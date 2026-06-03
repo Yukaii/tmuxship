@@ -121,8 +121,13 @@ pub fn emit_tmux_conf(env: &HashMap<String, String>) -> Result<Vec<TmuxOption>> 
     if let Some(center) = read_starship_config(Side::Center, env)? {
         if let Some(inactive) = custom_style(&center, "window_inactive") {
             options.push(TmuxOption {
+                name: "window-status-separator".to_string(),
+                value: format!("{} • #[default]", inactive),
+            });
+
+            options.push(TmuxOption {
                 name: "window-status-format".to_string(),
-                value: format!("{}##I #W #[default]", inactive),
+                value: format!("{}###I #W #[default]", inactive),
             });
         }
 
@@ -138,7 +143,7 @@ pub fn emit_tmux_conf(env: &HashMap<String, String>) -> Result<Vec<TmuxOption>> 
             };
             options.push(TmuxOption {
                 name: "window-status-current-format".to_string(),
-                value: format!("{}##I #W{}#[default]", active, zoom),
+                value: format!("{}###I #W{}#[default]", active, zoom),
             });
         }
     }
