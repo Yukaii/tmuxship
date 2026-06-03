@@ -76,6 +76,66 @@ fi
     bin_path
 }
 
+fn make_fake_tmux_setter(dir: &PathBuf) -> PathBuf {
+    let bin_path = dir.join("tmux");
+    let mut script = fs::File::create(&bin_path).unwrap();
+    writeln!(
+        script,
+        r#"#!/usr/bin/env bash
+
+if [[ "$1" == "set-option" ]]; then
+  printf '%s\n' "$@" >> "${{TMUX_SHIP_APPLY_LOG}}"
+else
+  echo "unexpected tmux invocation: $@" >&2
+  exit 1
+fi
+"#
+    )
+    .unwrap();
+    let mut perms = script.metadata().unwrap().permissions();
+    perms.set_mode(0o755);
+    fs::set_permissions(&bin_path, perms).unwrap();
+    bin_path
+}
+
+fn write_generator_configs(root: &PathBuf) {
+    fs::create_dir_all(root).unwrap();
+    fs::write(
+        root.join("starship.toml"),
+        r##"
+[custom.prefix_active]
+style = "bg:#95E6CB bold"
+
+[custom.session_normal]
+style = "fg:#565B66"
+"##,
+    )
+    .unwrap();
+    fs::write(
+        root.join(".right.toml"),
+        r##"
+[custom.battery]
+style = "fg:#FFFFFF"
+"##,
+    )
+    .unwrap();
+    fs::write(
+        root.join(".center.toml"),
+        r##"
+[custom.window_active]
+style = "fg:#BFBDB6 bold"
+
+[custom.window_inactive]
+style = "fg:#475266"
+
+[custom.window_zoom]
+command = "printf \"\uf293 \""
+style = "fg:#39BAE6"
+"##,
+    )
+    .unwrap();
+}
+
 #[test]
 fn cli_renders_using_resolved_config() {
     let dir = tempdir().unwrap();
@@ -100,6 +160,7 @@ fn cli_renders_using_resolved_config() {
             ),
         )
         .env("STARSHIP_CACHE", dir.path())
+        .env_remove("TMUX_SHIP_LEFT_CONFIG")
         .env_remove("STARSHIP_CONFIG");
 
     let output = cmd.assert().success().get_output().stdout.clone();
@@ -164,6 +225,7 @@ fn cli_exports_tmux_vars_to_starship() {
         )
         .env("STARSHIP_CACHE", dir.path())
         .env("TMUX_SHIP_TMUX_VARS", "session_name,window_index")
+        .env_remove("TMUX_SHIP_FULL_CONFIG")
         .env_remove("STARSHIP_CONFIG")
         .assert()
         .success()
@@ -239,7 +301,10 @@ fn cli_center_side_uses_env_and_tmux_vars() {
         )
         .env("STARSHIP_CACHE", dir.path())
         .env("TMUX_SHIP_TMUX_VARS", "window_index")
-        .env("TMUX_SHIP_CENTER_CONFIG", center_cfg.to_string_lossy().as_ref())
+        .env(
+            "TMUX_SHIP_CENTER_CONFIG",
+            center_cfg.to_string_lossy().as_ref(),
+        )
         .assert()
         .success()
         .get_output()
@@ -249,4 +314,70 @@ fn cli_center_side_uses_env_and_tmux_vars() {
     let stdout = String::from_utf8(output).unwrap();
     assert!(stdout.contains(center_cfg.to_string_lossy().as_ref()));
     assert!(stdout.contains("9"));
+}
+
+#[test]
+fn cli_emits_tmux_conf_from_starship_styles() {
+    let dir = tempdir().unwrap();
+    let config_root = dir.path().join(".config/tmux");
+    write_generator_configs(&config_root);
+
+    let output = Command::cargo_bin("tmuxship")
+        .unwrap()
+        .arg("emit-tmux-conf")
+        .env("HOME", dir.path())
+        .env_remove("TMUX_SHIP_LEFT_CONFIG")
+        .env_remove("TMUX_SHIP_RIGHT_CONFIG")
+        .env_remove("TMUX_SHIP_CENTER_CONFIG")
+        .env_remove("STARSHIP_CONFIG")
+        .assert()
+        .success()
+        .get_output()
+        .stdout
+        .clone();
+
+    let stdout = String::from_utf8(output).unwrap();
+    assert!(stdout.contains("set -g status-left '#{?client_prefix,#[bg=#95E6CB,bold]#S #[default],#[fg=#565B66]#S #[default]}'"));
+    assert!(stdout.contains("set -g status-right '#(tmuxship right)'"));
+    assert!(stdout.contains("set -g window-status-format '#[fg=#475266]##I #W #[default]'"));
+    assert!(stdout.contains(&format!("set -g window-status-current-format '#[fg=#BFBDB6,bold]##I #W #{{?window_zoomed_flag,#[fg=#39BAE6]{} #[default],}}#[default]'", "\u{f293}")));
+}
+
+#[test]
+fn cli_apply_sets_generated_tmux_options() {
+    let dir = tempdir().unwrap();
+    let config_root = dir.path().join(".config/tmux");
+    write_generator_configs(&config_root);
+
+    let fake_bin_dir = dir.path().join("bin");
+    fs::create_dir_all(&fake_bin_dir).unwrap();
+    make_fake_tmux_setter(&fake_bin_dir);
+    let log_path = dir.path().join("apply.log");
+
+    Command::cargo_bin("tmuxship")
+        .unwrap()
+        .arg("apply")
+        .env("HOME", dir.path())
+        .env("TMUX_SHIP_APPLY_LOG", &log_path)
+        .env(
+            "PATH",
+            format!(
+                "{}:{}",
+                fake_bin_dir.display(),
+                std::env::var("PATH").unwrap()
+            ),
+        )
+        .env_remove("TMUX_SHIP_LEFT_CONFIG")
+        .env_remove("TMUX_SHIP_RIGHT_CONFIG")
+        .env_remove("TMUX_SHIP_CENTER_CONFIG")
+        .env_remove("STARSHIP_CONFIG")
+        .assert()
+        .success();
+
+    let log = fs::read_to_string(log_path).unwrap();
+    assert!(log.contains("status-left"));
+    assert!(log
+        .contains("#{?client_prefix,#[bg=#95E6CB,bold]#S #[default],#[fg=#565B66]#S #[default]}"));
+    assert!(log.contains("status-right"));
+    assert!(log.contains("window-status-current-format"));
 }

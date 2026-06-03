@@ -102,7 +102,7 @@ The examples use Catppuccin Mocha colors. Adjust the color codes to match your t
 
 ## tmux Configuration
 
-Example tmux config to use these Starship configs:
+Example tmux config to use these Starship configs. This uses `tmuxship apply` so tmux renders native values like session and window names synchronously, while tmuxship supplies styles from the Starship TOML files:
 
 ```tmux
 # Enable status bar
@@ -110,27 +110,35 @@ set -g status on
 set -g status-left-length 100
 set -g status-right-length 200
 set -g status-justify centre
+set -g focus-events on
 
 # Set config paths
 setenv -g TMUX_SHIP_LEFT_CONFIG   "$HOME/.tmux/starship.toml"
 setenv -g TMUX_SHIP_RIGHT_CONFIG  "$HOME/.tmux/.right.toml"
 setenv -g TMUX_SHIP_CENTER_CONFIG "$HOME/.tmux/.center.toml"
 
-# Status lines
-set -g status-left  '#(tmuxship left)'
-set -g status-right '#(tmuxship right)'
+# Generate status-left, status-right, and window status options
+run-shell 'tmuxship apply'
 
-# Window status
+# Generic window status options
 set -g window-status-separator " • "
-set -g window-status-format        '#(tmuxship center)'
-set -g window-status-current-format '#(tmuxship center)'
 
 # Refresh on events
 set-hook -g client-session-changed 'refresh-client -S'
 set-hook -g client-attached        'refresh-client -S'
+set-hook -g client-focus-in        'refresh-client -S'
 set-hook -g pane-focus-in          'refresh-client -S'
 set-hook -g window-pane-changed    'refresh-client -S'
 
 # Periodic refresh (optional)
 set -g status-interval 2
+```
+
+`tmuxship apply` generates tmux options from recognized custom modules such as `prefix_active`, `session_normal`, `window_active`, `window_inactive`, and `window_zoom`. The right status remains runtime-rendered as `#(tmuxship right)` for shell-driven modules such as battery.
+
+If you prefer runtime-rendered window status, pass the window ID so tmuxship queries the correct window:
+
+```tmux
+set -g window-status-format        '#(TMUX_SHIP_TARGET="#{window_id}" tmuxship center)'
+set -g window-status-current-format '#(TMUX_SHIP_TARGET="#{window_id}" tmuxship center)'
 ```
