@@ -4,6 +4,8 @@ use shellexpand::tilde;
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
+use crate::theme::{catalog::find_theme_with_env, ensure_theme_file};
+
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Serialize)]
 pub enum Side {
     Left,
@@ -20,7 +22,7 @@ pub struct ConfigResolution {
 }
 
 impl ConfigResolution {
-    fn new(side: Side, path: PathBuf, source: impl Into<String>) -> Self {
+    pub fn new(side: Side, path: PathBuf, source: impl Into<String>) -> Self {
         Self {
             side,
             config_path: path,
@@ -43,9 +45,19 @@ fn ensure_file(path: PathBuf, context: &str) -> Result<PathBuf> {
     }
 }
 
+#[allow(dead_code)]
 pub fn resolve_config(
     side: Side,
     override_path: Option<PathBuf>,
+    env: &HashMap<String, String>,
+) -> Result<ConfigResolution> {
+    resolve_config_with_theme(side, override_path, None, env)
+}
+
+pub fn resolve_config_with_theme(
+    side: Side,
+    override_path: Option<PathBuf>,
+    theme_override: Option<&str>,
     env: &HashMap<String, String>,
 ) -> Result<ConfigResolution> {
     let normalized_side = match side {
@@ -75,6 +87,21 @@ pub fn resolve_config(
             "STARSHIP_CONFIG points to missing file",
         )?;
         return Ok(ConfigResolution::new(side, expanded, "STARSHIP_CONFIG"));
+    }
+
+    // Check for theme override or TMUX_SHIP_THEME
+    let theme_name = theme_override.or_else(|| env.get("TMUX_SHIP_THEME").map(|s| s.as_str()));
+    if let Some(name) = theme_name {
+        if let Some(theme) = find_theme_with_env(name, env) {
+            let cached_path = ensure_theme_file(&theme, side, env)?;
+            return Ok(ConfigResolution::new(
+                side,
+                cached_path,
+                format!("theme:{}", theme.id),
+            ));
+        } else {
+            return Err(anyhow!("Unknown theme: '{}'. Run `tmuxship theme list` to see available themes.", name));
+        }
     }
 
     let mut candidate_dirs: Vec<(PathBuf, &str)> = Vec::new();

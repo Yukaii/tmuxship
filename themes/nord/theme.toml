@@ -1,0 +1,26 @@
+name = "Nord"
+description = "An arctic, north-bluish clean color palette for an optimal visual workflow"
+author = "Arctic Ice Studio"
+variant = "dark"
+window_separator = " • "
+
+[[swatches]]
+name = "Frost Blue"
+hex = "#88c0d0"
+
+[[swatches]]
+name = "Dark Frost"
+hex = "#81a1c1"
+
+[[swatches]]
+name = "Aurora Green"
+hex = "#a3be8c"
+
+[[swatches]]
+name = "Aurora Yellow"
+hex = "#ebcb8b"
+
+[[swatches]]
+name = "Aurora Purple"
+hex = "#b48ead"
+

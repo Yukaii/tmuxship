@@ -1,0 +1,596 @@
+[
+  {
+    "id": "catppuccin-frappe",
+    "name": "Catppuccin Frappé",
+    "description": "Soft muted dark theme balancing warmth and cool undertones",
+    "author": "Catppuccin Org",
+    "variant": "dark",
+    "window_separator": " • ",
+    "swatches": [
+      {
+        "name": "Teal",
+        "hex": "#81c8be"
+      },
+      {
+        "name": "Blue",
+        "hex": "#8caaee"
+      },
+      {
+        "name": "Green",
+        "hex": "#a6d189"
+      },
+      {
+        "name": "Peach",
+        "hex": "#ef9f76"
+      },
+      {
+        "name": "Mauve",
+        "hex": "#ca9ee6"
+      }
+    ],
+    "left_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#81c8be fg:#232634 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#737994\"\n",
+    "center_toml": "format = \"$custom\"\nadd_newline = false\n\n[custom.window_active]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"bg:#414559 fg:#c6d0f5 bold\"\n\n[custom.window_inactive]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" != \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"fg:#737994\"\n\n[custom.window_zoom]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\" && test \"${TMUX_WINDOW_ZOOMED_FLAG:-0}\" = \"1\"'\ncommand = 'printf \"🔍\"'\nformat = \" $output\"\nstyle = \"fg:#e5c890\"\n",
+    "right_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$time$custom\"\nadd_newline = false\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#8caaee\"\ntime_format = \"%H:%M:%S\"\n\n[custom.host]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_HOST_SHORT:-$(hostname -s)}\"'\nformat = \"on [$output]($style) \"\nstyle = \"fg:#a6d189\"\n\n[custom.window_count]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_SESSION_WINDOWS:-1}\"'\nformat = \"[󰖲 $output]($style)\"\nstyle = \"fg:#ca9ee6\"\n",
+    "full_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom$time\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#81c8be fg:#232634 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#737994\"\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#8caaee\"\ntime_format = \"%H:%M:%S\"\n"
+  },
+  {
+    "id": "catppuccin-latte",
+    "name": "Catppuccin Latte",
+    "description": "Crisp, bright light theme with cheerful and soft contrast",
+    "author": "Catppuccin Org",
+    "variant": "light",
+    "window_separator": " • ",
+    "swatches": [
+      {
+        "name": "Teal",
+        "hex": "#179299"
+      },
+      {
+        "name": "Blue",
+        "hex": "#1e66f5"
+      },
+      {
+        "name": "Green",
+        "hex": "#40a02b"
+      },
+      {
+        "name": "Peach",
+        "hex": "#fe640b"
+      },
+      {
+        "name": "Mauve",
+        "hex": "#8839ef"
+      }
+    ],
+    "left_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#179299 fg:#eff1f5 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#7c7f93\"\n",
+    "center_toml": "format = \"$custom\"\nadd_newline = false\n\n[custom.window_active]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"bg:#ccd0da fg:#4c4f69 bold\"\n\n[custom.window_inactive]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" != \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"fg:#8c8fa1\"\n\n[custom.window_zoom]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\" && test \"${TMUX_WINDOW_ZOOMED_FLAG:-0}\" = \"1\"'\ncommand = 'printf \"🔍\"'\nformat = \" $output\"\nstyle = \"fg:#df8e1d\"\n",
+    "right_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$time$custom\"\nadd_newline = false\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#1e66f5\"\ntime_format = \"%H:%M:%S\"\n\n[custom.host]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_HOST_SHORT:-$(hostname -s)}\"'\nformat = \"on [$output]($style) \"\nstyle = \"fg:#40a02b\"\n\n[custom.window_count]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_SESSION_WINDOWS:-1}\"'\nformat = \"[󰖲 $output]($style)\"\nstyle = \"fg:#8839ef\"\n",
+    "full_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom$time\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#179299 fg:#eff1f5 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#7c7f93\"\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#1e66f5\"\ntime_format = \"%H:%M:%S\"\n"
+  },
+  {
+    "id": "catppuccin-macchiato",
+    "name": "Catppuccin Macchiato",
+    "description": "Medium-contrast dark flavor with smooth pastel undertones",
+    "author": "Catppuccin Org",
+    "variant": "dark",
+    "window_separator": " • ",
+    "swatches": [
+      {
+        "name": "Teal",
+        "hex": "#8bd5ca"
+      },
+      {
+        "name": "Blue",
+        "hex": "#8aadf4"
+      },
+      {
+        "name": "Green",
+        "hex": "#a6da95"
+      },
+      {
+        "name": "Peach",
+        "hex": "#f5a97f"
+      },
+      {
+        "name": "Mauve",
+        "hex": "#c6a0f6"
+      }
+    ],
+    "left_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#8bd5ca fg:#181926 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#6e738d\"\n",
+    "center_toml": "format = \"$custom\"\nadd_newline = false\n\n[custom.window_active]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"bg:#363a4f fg:#cad3f5 bold\"\n\n[custom.window_inactive]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" != \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"fg:#6e738d\"\n\n[custom.window_zoom]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\" && test \"${TMUX_WINDOW_ZOOMED_FLAG:-0}\" = \"1\"'\ncommand = 'printf \"🔍\"'\nformat = \" $output\"\nstyle = \"fg:#eed49f\"\n",
+    "right_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$time$custom\"\nadd_newline = false\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#8aadf4\"\ntime_format = \"%H:%M:%S\"\n\n[custom.host]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_HOST_SHORT:-$(hostname -s)}\"'\nformat = \"on [$output]($style) \"\nstyle = \"fg:#a6da95\"\n\n[custom.window_count]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_SESSION_WINDOWS:-1}\"'\nformat = \"[󰖲 $output]($style)\"\nstyle = \"fg:#c6a0f6\"\n",
+    "full_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom$time\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#8bd5ca fg:#181926 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#6e738d\"\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#8aadf4\"\ntime_format = \"%H:%M:%S\"\n"
+  },
+  {
+    "id": "catppuccin-mocha",
+    "name": "Catppuccin Mocha",
+    "description": "Soothing pastel dark theme with deep contrast and rich vibrant accents",
+    "author": "Catppuccin Org",
+    "variant": "dark",
+    "window_separator": " • ",
+    "swatches": [
+      {
+        "name": "Teal",
+        "hex": "#94e2d5"
+      },
+      {
+        "name": "Blue",
+        "hex": "#89b4fa"
+      },
+      {
+        "name": "Green",
+        "hex": "#a6e3a1"
+      },
+      {
+        "name": "Yellow",
+        "hex": "#f9e2af"
+      },
+      {
+        "name": "Mauve",
+        "hex": "#cba6f7"
+      },
+      {
+        "name": "Surface",
+        "hex": "#313244"
+      }
+    ],
+    "left_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#95E6CB fg:#11111b bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#565B66\"\n",
+    "center_toml": "format = \"$custom\"\nadd_newline = false\n\n[custom.window_active]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"bg:#313244 fg:#CDD6F4 bold\"\n\n[custom.window_inactive]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" != \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"fg:#6C7086\"\n\n[custom.window_zoom]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\" && test \"${TMUX_WINDOW_ZOOMED_FLAG:-0}\" = \"1\"'\ncommand = 'printf \"🔍\"'\nformat = \" $output\"\nstyle = \"fg:#F9E2AF\"\n",
+    "right_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$time$custom\"\nadd_newline = false\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#89B4FA\"\ntime_format = \"%H:%M:%S\"\n\n[custom.host]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_HOST_SHORT:-$(hostname -s)}\"'\nformat = \"on [$output]($style) \"\nstyle = \"fg:#A6E3A1\"\n\n[custom.window_count]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_SESSION_WINDOWS:-1}\"'\nformat = \"[󰖲 $output]($style)\"\nstyle = \"fg:#CBA6F7\"\n",
+    "full_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom$time\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#95E6CB fg:#11111b bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#565B66\"\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#89B4FA\"\ntime_format = \"%H:%M:%S\"\n"
+  },
+  {
+    "id": "dracula",
+    "name": "Dracula",
+    "description": "Famous dark theme for hackers with iconic purple, cyan and neon accents",
+    "author": "Zeno Rocha",
+    "variant": "dark",
+    "window_separator": " • ",
+    "swatches": [
+      {
+        "name": "Purple",
+        "hex": "#bd93f9"
+      },
+      {
+        "name": "Cyan",
+        "hex": "#8be9fd"
+      },
+      {
+        "name": "Green",
+        "hex": "#50fa7b"
+      },
+      {
+        "name": "Pink",
+        "hex": "#ff79c6"
+      },
+      {
+        "name": "Yellow",
+        "hex": "#f1fa8c"
+      }
+    ],
+    "left_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#bd93f9 fg:#282a36 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#6272a4\"\n",
+    "center_toml": "format = \"$custom\"\nadd_newline = false\n\n[custom.window_active]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"bg:#44475a fg:#f8f8f2 bold\"\n\n[custom.window_inactive]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" != \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"fg:#6272a4\"\n\n[custom.window_zoom]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\" && test \"${TMUX_WINDOW_ZOOMED_FLAG:-0}\" = \"1\"'\ncommand = 'printf \"🔍\"'\nformat = \" $output\"\nstyle = \"fg:#f1fa8c\"\n",
+    "right_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$time$custom\"\nadd_newline = false\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#8be9fd\"\ntime_format = \"%H:%M:%S\"\n\n[custom.host]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_HOST_SHORT:-$(hostname -s)}\"'\nformat = \"on [$output]($style) \"\nstyle = \"fg:#50fa7b\"\n\n[custom.window_count]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_SESSION_WINDOWS:-1}\"'\nformat = \"[󰖲 $output]($style)\"\nstyle = \"fg:#ff79c6\"\n",
+    "full_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom$time\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#bd93f9 fg:#282a36 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#6272a4\"\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#8be9fd\"\ntime_format = \"%H:%M:%S\"\n"
+  },
+  {
+    "id": "gruvbox-dark",
+    "name": "Gruvbox Dark",
+    "description": "Retro groove warm color scheme with earthy autumn tones",
+    "author": "morhetz",
+    "variant": "dark",
+    "window_separator": " • ",
+    "swatches": [
+      {
+        "name": "Yellow",
+        "hex": "#fabd2f"
+      },
+      {
+        "name": "Green",
+        "hex": "#b8bb26"
+      },
+      {
+        "name": "Aqua",
+        "hex": "#8ec07c"
+      },
+      {
+        "name": "Blue",
+        "hex": "#83a598"
+      },
+      {
+        "name": "Orange",
+        "hex": "#fe8019"
+      }
+    ],
+    "left_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#fabd2f fg:#282828 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#7c6f64\"\n",
+    "center_toml": "format = \"$custom\"\nadd_newline = false\n\n[custom.window_active]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"bg:#3c3836 fg:#ebdbb2 bold\"\n\n[custom.window_inactive]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" != \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"fg:#7c6f64\"\n\n[custom.window_zoom]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\" && test \"${TMUX_WINDOW_ZOOMED_FLAG:-0}\" = \"1\"'\ncommand = 'printf \"🔍\"'\nformat = \" $output\"\nstyle = \"fg:#fe8019\"\n",
+    "right_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$time$custom\"\nadd_newline = false\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#83a598\"\ntime_format = \"%H:%M:%S\"\n\n[custom.host]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_HOST_SHORT:-$(hostname -s)}\"'\nformat = \"on [$output]($style) \"\nstyle = \"fg:#b8bb26\"\n\n[custom.window_count]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_SESSION_WINDOWS:-1}\"'\nformat = \"[󰖲 $output]($style)\"\nstyle = \"fg:#d3869b\"\n",
+    "full_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom$time\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#fabd2f fg:#282828 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#7c6f64\"\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#83a598\"\ntime_format = \"%H:%M:%S\"\n"
+  },
+  {
+    "id": "gruvbox-light",
+    "name": "Gruvbox Light",
+    "description": "Light variant of retro groove warm palette with mellow parchment tones",
+    "author": "morhetz",
+    "variant": "light",
+    "window_separator": " • ",
+    "swatches": [
+      {
+        "name": "Yellow",
+        "hex": "#d79921"
+      },
+      {
+        "name": "Green",
+        "hex": "#98971a"
+      },
+      {
+        "name": "Aqua",
+        "hex": "#689d6a"
+      },
+      {
+        "name": "Blue",
+        "hex": "#458588"
+      },
+      {
+        "name": "Orange",
+        "hex": "#af3a03"
+      }
+    ],
+    "left_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#d79921 fg:#fbf1c7 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#928374\"\n",
+    "center_toml": "format = \"$custom\"\nadd_newline = false\n\n[custom.window_active]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"bg:#ebdbb2 fg:#3c3836 bold\"\n\n[custom.window_inactive]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" != \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"fg:#928374\"\n\n[custom.window_zoom]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\" && test \"${TMUX_WINDOW_ZOOMED_FLAG:-0}\" = \"1\"'\ncommand = 'printf \"🔍\"'\nformat = \" $output\"\nstyle = \"fg:#af3a03\"\n",
+    "right_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$time$custom\"\nadd_newline = false\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#458588\"\ntime_format = \"%H:%M:%S\"\n\n[custom.host]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_HOST_SHORT:-$(hostname -s)}\"'\nformat = \"on [$output]($style) \"\nstyle = \"fg:#98971a\"\n\n[custom.window_count]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_SESSION_WINDOWS:-1}\"'\nformat = \"[󰖲 $output]($style)\"\nstyle = \"fg:#b16286\"\n",
+    "full_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom$time\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#d79921 fg:#fbf1c7 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#928374\"\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#458588\"\ntime_format = \"%H:%M:%S\"\n"
+  },
+  {
+    "id": "kanagawa",
+    "name": "Kanagawa",
+    "description": "Elegant dark theme inspired by the colors of Katsushika Hokusai's woodblock print",
+    "author": "rebelot",
+    "variant": "dark",
+    "window_separator": " • ",
+    "swatches": [
+      {
+        "name": "Wave Blue",
+        "hex": "#7e9cd8"
+      },
+      {
+        "name": "Spring Green",
+        "hex": "#98bb6c"
+      },
+      {
+        "name": "Surimi Orange",
+        "hex": "#ffa066"
+      },
+      {
+        "name": "Sakura Pink",
+        "hex": "#d27e99"
+      },
+      {
+        "name": "Oni Violet",
+        "hex": "#957fb8"
+      }
+    ],
+    "left_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#7e9cd8 fg:#1f1f28 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#727169\"\n",
+    "center_toml": "format = \"$custom\"\nadd_newline = false\n\n[custom.window_active]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"bg:#2a2a37 fg:#dcd7ba bold\"\n\n[custom.window_inactive]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" != \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"fg:#727169\"\n\n[custom.window_zoom]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\" && test \"${TMUX_WINDOW_ZOOMED_FLAG:-0}\" = \"1\"'\ncommand = 'printf \"🔍\"'\nformat = \" $output\"\nstyle = \"fg:#ffa066\"\n",
+    "right_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$time$custom\"\nadd_newline = false\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#7fb4ca\"\ntime_format = \"%H:%M:%S\"\n\n[custom.host]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_HOST_SHORT:-$(hostname -s)}\"'\nformat = \"on [$output]($style) \"\nstyle = \"fg:#98bb6c\"\n\n[custom.window_count]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_SESSION_WINDOWS:-1}\"'\nformat = \"[󰖲 $output]($style)\"\nstyle = \"fg:#957fb8\"\n",
+    "full_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom$time\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#7e9cd8 fg:#1f1f28 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#727169\"\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#7fb4ca\"\ntime_format = \"%H:%M:%S\"\n"
+  },
+  {
+    "id": "nord",
+    "name": "Nord",
+    "description": "An arctic, north-bluish clean color palette for an optimal visual workflow",
+    "author": "Arctic Ice Studio",
+    "variant": "dark",
+    "window_separator": " • ",
+    "swatches": [
+      {
+        "name": "Frost Blue",
+        "hex": "#88c0d0"
+      },
+      {
+        "name": "Dark Frost",
+        "hex": "#81a1c1"
+      },
+      {
+        "name": "Aurora Green",
+        "hex": "#a3be8c"
+      },
+      {
+        "name": "Aurora Yellow",
+        "hex": "#ebcb8b"
+      },
+      {
+        "name": "Aurora Purple",
+        "hex": "#b48ead"
+      }
+    ],
+    "left_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#88c0d0 fg:#2e3440 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#4c566a\"\n",
+    "center_toml": "format = \"$custom\"\nadd_newline = false\n\n[custom.window_active]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"bg:#3b4252 fg:#eceff4 bold\"\n\n[custom.window_inactive]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" != \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"fg:#4c566a\"\n\n[custom.window_zoom]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\" && test \"${TMUX_WINDOW_ZOOMED_FLAG:-0}\" = \"1\"'\ncommand = 'printf \"🔍\"'\nformat = \" $output\"\nstyle = \"fg:#ebcb8b\"\n",
+    "right_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$time$custom\"\nadd_newline = false\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#81a1c1\"\ntime_format = \"%H:%M:%S\"\n\n[custom.host]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_HOST_SHORT:-$(hostname -s)}\"'\nformat = \"on [$output]($style) \"\nstyle = \"fg:#a3be8c\"\n\n[custom.window_count]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_SESSION_WINDOWS:-1}\"'\nformat = \"[󰖲 $output]($style)\"\nstyle = \"fg:#b48ead\"\n",
+    "full_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom$time\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#88c0d0 fg:#2e3440 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#4c566a\"\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#81a1c1\"\ntime_format = \"%H:%M:%S\"\n"
+  },
+  {
+    "id": "onedark",
+    "name": "One Dark",
+    "description": "Atom's iconic dark theme with perfectly balanced syntax colors",
+    "author": "Atom / GitHub",
+    "variant": "dark",
+    "window_separator": " • ",
+    "swatches": [
+      {
+        "name": "Blue",
+        "hex": "#61afef"
+      },
+      {
+        "name": "Green",
+        "hex": "#98c379"
+      },
+      {
+        "name": "Purple",
+        "hex": "#c678dd"
+      },
+      {
+        "name": "Yellow",
+        "hex": "#e5c07b"
+      },
+      {
+        "name": "Cyan",
+        "hex": "#56b6c2"
+      }
+    ],
+    "left_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#61afef fg:#282c34 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#5c6370\"\n",
+    "center_toml": "format = \"$custom\"\nadd_newline = false\n\n[custom.window_active]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"bg:#353b45 fg:#abb2bf bold\"\n\n[custom.window_inactive]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" != \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"fg:#5c6370\"\n\n[custom.window_zoom]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\" && test \"${TMUX_WINDOW_ZOOMED_FLAG:-0}\" = \"1\"'\ncommand = 'printf \"🔍\"'\nformat = \" $output\"\nstyle = \"fg:#e5c07b\"\n",
+    "right_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$time$custom\"\nadd_newline = false\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#56b6c2\"\ntime_format = \"%H:%M:%S\"\n\n[custom.host]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_HOST_SHORT:-$(hostname -s)}\"'\nformat = \"on [$output]($style) \"\nstyle = \"fg:#98c379\"\n\n[custom.window_count]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_SESSION_WINDOWS:-1}\"'\nformat = \"[󰖲 $output]($style)\"\nstyle = \"fg:#c678dd\"\n",
+    "full_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom$time\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#61afef fg:#282c34 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#5c6370\"\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#56b6c2\"\ntime_format = \"%H:%M:%S\"\n"
+  },
+  {
+    "id": "rose-pine",
+    "name": "Rosé Pine",
+    "description": "All natural pine, faux fur and a bit of soho vibes for the classy minimalist",
+    "author": "Rose Pine",
+    "variant": "dark",
+    "window_separator": " • ",
+    "swatches": [
+      {
+        "name": "Love",
+        "hex": "#eb6f92"
+      },
+      {
+        "name": "Gold",
+        "hex": "#f6c177"
+      },
+      {
+        "name": "Rose",
+        "hex": "#ebbcba"
+      },
+      {
+        "name": "Pine",
+        "hex": "#31748f"
+      },
+      {
+        "name": "Foam",
+        "hex": "#9ccfd8"
+      },
+      {
+        "name": "Iris",
+        "hex": "#c4a7e7"
+      }
+    ],
+    "left_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#eb6f92 fg:#191724 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#908caa\"\n",
+    "center_toml": "format = \"$custom\"\nadd_newline = false\n\n[custom.window_active]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"bg:#26233a fg:#ebbcba bold\"\n\n[custom.window_inactive]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" != \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"fg:#6e6a86\"\n\n[custom.window_zoom]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\" && test \"${TMUX_WINDOW_ZOOMED_FLAG:-0}\" = \"1\"'\ncommand = 'printf \"🔍\"'\nformat = \" $output\"\nstyle = \"fg:#f6c177\"\n",
+    "right_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$time$custom\"\nadd_newline = false\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#9ccfd8\"\ntime_format = \"%H:%M:%S\"\n\n[custom.host]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_HOST_SHORT:-$(hostname -s)}\"'\nformat = \"on [$output]($style) \"\nstyle = \"fg:#31748f\"\n\n[custom.window_count]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_SESSION_WINDOWS:-1}\"'\nformat = \"[󰖲 $output]($style)\"\nstyle = \"fg:#c4a7e7\"\n",
+    "full_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom$time\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#eb6f92 fg:#191724 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#908caa\"\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#9ccfd8\"\ntime_format = \"%H:%M:%S\"\n"
+  },
+  {
+    "id": "rose-pine-dawn",
+    "name": "Rosé Pine Dawn",
+    "description": "Delicate sunrise hues on a warm paper background",
+    "author": "Rose Pine",
+    "variant": "light",
+    "window_separator": " • ",
+    "swatches": [
+      {
+        "name": "Love",
+        "hex": "#b4637a"
+      },
+      {
+        "name": "Gold",
+        "hex": "#ea9d34"
+      },
+      {
+        "name": "Rose",
+        "hex": "#d7827e"
+      },
+      {
+        "name": "Pine",
+        "hex": "#286983"
+      },
+      {
+        "name": "Foam",
+        "hex": "#56949f"
+      },
+      {
+        "name": "Iris",
+        "hex": "#907aa9"
+      }
+    ],
+    "left_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#b4637a fg:#faf4ed bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#797593\"\n",
+    "center_toml": "format = \"$custom\"\nadd_newline = false\n\n[custom.window_active]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"bg:#f2e9e1 fg:#d7827e bold\"\n\n[custom.window_inactive]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" != \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"fg:#9893a5\"\n\n[custom.window_zoom]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\" && test \"${TMUX_WINDOW_ZOOMED_FLAG:-0}\" = \"1\"'\ncommand = 'printf \"🔍\"'\nformat = \" $output\"\nstyle = \"fg:#ea9d34\"\n",
+    "right_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$time$custom\"\nadd_newline = false\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#56949f\"\ntime_format = \"%H:%M:%S\"\n\n[custom.host]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_HOST_SHORT:-$(hostname -s)}\"'\nformat = \"on [$output]($style) \"\nstyle = \"fg:#286983\"\n\n[custom.window_count]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_SESSION_WINDOWS:-1}\"'\nformat = \"[󰖲 $output]($style)\"\nstyle = \"fg:#907aa9\"\n",
+    "full_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom$time\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#b4637a fg:#faf4ed bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#797593\"\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#56949f\"\ntime_format = \"%H:%M:%S\"\n"
+  },
+  {
+    "id": "rose-pine-moon",
+    "name": "Rosé Pine Moon",
+    "description": "Cozy blend of warm and cool night hues for low-light focus",
+    "author": "Rose Pine",
+    "variant": "dark",
+    "window_separator": " • ",
+    "swatches": [
+      {
+        "name": "Love",
+        "hex": "#eb6f92"
+      },
+      {
+        "name": "Gold",
+        "hex": "#f6c177"
+      },
+      {
+        "name": "Rose",
+        "hex": "#ea9a97"
+      },
+      {
+        "name": "Pine",
+        "hex": "#3e8fb0"
+      },
+      {
+        "name": "Foam",
+        "hex": "#9ccfd8"
+      },
+      {
+        "name": "Iris",
+        "hex": "#c4a7e7"
+      }
+    ],
+    "left_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#eb6f92 fg:#232136 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#908caa\"\n",
+    "center_toml": "format = \"$custom\"\nadd_newline = false\n\n[custom.window_active]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"bg:#393552 fg:#ea9a97 bold\"\n\n[custom.window_inactive]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" != \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"fg:#6e6a86\"\n\n[custom.window_zoom]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\" && test \"${TMUX_WINDOW_ZOOMED_FLAG:-0}\" = \"1\"'\ncommand = 'printf \"🔍\"'\nformat = \" $output\"\nstyle = \"fg:#f6c177\"\n",
+    "right_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$time$custom\"\nadd_newline = false\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#9ccfd8\"\ntime_format = \"%H:%M:%S\"\n\n[custom.host]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_HOST_SHORT:-$(hostname -s)}\"'\nformat = \"on [$output]($style) \"\nstyle = \"fg:#3e8fb0\"\n\n[custom.window_count]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_SESSION_WINDOWS:-1}\"'\nformat = \"[󰖲 $output]($style)\"\nstyle = \"fg:#c4a7e7\"\n",
+    "full_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom$time\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#eb6f92 fg:#232136 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#908caa\"\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#9ccfd8\"\ntime_format = \"%H:%M:%S\"\n"
+  },
+  {
+    "id": "solarized-dark",
+    "name": "Solarized Dark",
+    "description": "Precision color scheme designed for prolonged eye comfort in terminal workstations",
+    "author": "Ethan Schoonover",
+    "variant": "dark",
+    "window_separator": " • ",
+    "swatches": [
+      {
+        "name": "Blue",
+        "hex": "#268bd2"
+      },
+      {
+        "name": "Cyan",
+        "hex": "#2aa198"
+      },
+      {
+        "name": "Green",
+        "hex": "#859900"
+      },
+      {
+        "name": "Yellow",
+        "hex": "#b58900"
+      },
+      {
+        "name": "Violet",
+        "hex": "#6c71c4"
+      }
+    ],
+    "left_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#268bd2 fg:#002b36 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#586e75\"\n",
+    "center_toml": "format = \"$custom\"\nadd_newline = false\n\n[custom.window_active]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"bg:#073642 fg:#93a1a1 bold\"\n\n[custom.window_inactive]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" != \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"fg:#586e75\"\n\n[custom.window_zoom]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\" && test \"${TMUX_WINDOW_ZOOMED_FLAG:-0}\" = \"1\"'\ncommand = 'printf \"🔍\"'\nformat = \" $output\"\nstyle = \"fg:#b58900\"\n",
+    "right_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$time$custom\"\nadd_newline = false\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#2aa198\"\ntime_format = \"%H:%M:%S\"\n\n[custom.host]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_HOST_SHORT:-$(hostname -s)}\"'\nformat = \"on [$output]($style) \"\nstyle = \"fg:#859900\"\n\n[custom.window_count]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_SESSION_WINDOWS:-1}\"'\nformat = \"[󰖲 $output]($style)\"\nstyle = \"fg:#6c71c4\"\n",
+    "full_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom$time\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#268bd2 fg:#002b36 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#586e75\"\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#2aa198\"\ntime_format = \"%H:%M:%S\"\n"
+  },
+  {
+    "id": "solarized-light",
+    "name": "Solarized Light",
+    "description": "Scientific light color scheme carefully balanced for optimal readability",
+    "author": "Ethan Schoonover",
+    "variant": "light",
+    "window_separator": " • ",
+    "swatches": [
+      {
+        "name": "Blue",
+        "hex": "#268bd2"
+      },
+      {
+        "name": "Cyan",
+        "hex": "#2aa198"
+      },
+      {
+        "name": "Green",
+        "hex": "#859900"
+      },
+      {
+        "name": "Yellow",
+        "hex": "#b58900"
+      },
+      {
+        "name": "Violet",
+        "hex": "#6c71c4"
+      }
+    ],
+    "left_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#268bd2 fg:#fdf6e3 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#93a1a1\"\n",
+    "center_toml": "format = \"$custom\"\nadd_newline = false\n\n[custom.window_active]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"bg:#eee8d5 fg:#586e75 bold\"\n\n[custom.window_inactive]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" != \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"fg:#93a1a1\"\n\n[custom.window_zoom]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\" && test \"${TMUX_WINDOW_ZOOMED_FLAG:-0}\" = \"1\"'\ncommand = 'printf \"🔍\"'\nformat = \" $output\"\nstyle = \"fg:#b58900\"\n",
+    "right_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$time$custom\"\nadd_newline = false\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#2aa198\"\ntime_format = \"%H:%M:%S\"\n\n[custom.host]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_HOST_SHORT:-$(hostname -s)}\"'\nformat = \"on [$output]($style) \"\nstyle = \"fg:#859900\"\n\n[custom.window_count]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_SESSION_WINDOWS:-1}\"'\nformat = \"[󰖲 $output]($style)\"\nstyle = \"fg:#6c71c4\"\n",
+    "full_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom$time\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#268bd2 fg:#fdf6e3 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#93a1a1\"\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#2aa198\"\ntime_format = \"%H:%M:%S\"\n"
+  },
+  {
+    "id": "tokyo-night",
+    "name": "Tokyo Night",
+    "description": "A clean, dark Neovim-inspired theme that celebrates the lights of Downtown Tokyo",
+    "author": "Tokyo Night",
+    "variant": "dark",
+    "window_separator": " • ",
+    "swatches": [
+      {
+        "name": "Blue",
+        "hex": "#7aa2f7"
+      },
+      {
+        "name": "Cyan",
+        "hex": "#7dcfff"
+      },
+      {
+        "name": "Green",
+        "hex": "#73daca"
+      },
+      {
+        "name": "Magenta",
+        "hex": "#bb9af7"
+      },
+      {
+        "name": "Yellow",
+        "hex": "#e0af68"
+      }
+    ],
+    "left_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#7aa2f7 fg:#1a1b26 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#565f89\"\n",
+    "center_toml": "format = \"$custom\"\nadd_newline = false\n\n[custom.window_active]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"bg:#24283b fg:#c0caf5 bold\"\n\n[custom.window_inactive]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" != \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"fg:#565f89\"\n\n[custom.window_zoom]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\" && test \"${TMUX_WINDOW_ZOOMED_FLAG:-0}\" = \"1\"'\ncommand = 'printf \"🔍\"'\nformat = \" $output\"\nstyle = \"fg:#e0af68\"\n",
+    "right_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$time$custom\"\nadd_newline = false\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#7dcfff\"\ntime_format = \"%H:%M:%S\"\n\n[custom.host]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_HOST_SHORT:-$(hostname -s)}\"'\nformat = \"on [$output]($style) \"\nstyle = \"fg:#73daca\"\n\n[custom.window_count]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_SESSION_WINDOWS:-1}\"'\nformat = \"[󰖲 $output]($style)\"\nstyle = \"fg:#bb9af7\"\n",
+    "full_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom$time\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#7aa2f7 fg:#1a1b26 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#565f89\"\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#7dcfff\"\ntime_format = \"%H:%M:%S\"\n"
+  },
+  {
+    "id": "tokyo-night-moon",
+    "name": "Tokyo Night Moon",
+    "description": "Dark blue hue variant of Tokyo Night with midnight aesthetics",
+    "author": "Tokyo Night",
+    "variant": "dark",
+    "window_separator": " • ",
+    "swatches": [
+      {
+        "name": "Blue",
+        "hex": "#82aaff"
+      },
+      {
+        "name": "Teal",
+        "hex": "#4fd6be"
+      },
+      {
+        "name": "Green",
+        "hex": "#c3e88d"
+      },
+      {
+        "name": "Pink",
+        "hex": "#fca7ea"
+      },
+      {
+        "name": "Yellow",
+        "hex": "#ffc777"
+      }
+    ],
+    "left_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#82aaff fg:#1e2030 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#636da6\"\n",
+    "center_toml": "format = \"$custom\"\nadd_newline = false\n\n[custom.window_active]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"bg:#2d3f76 fg:#c8d3f5 bold\"\n\n[custom.window_inactive]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" != \"1\"'\ncommand = 'printf \"%s:%s\" \"${TMUX_WINDOW_INDEX:-1}\" \"${TMUX_WINDOW_NAME:-sh}\"'\nformat = \"[$output]($style)\"\nstyle = \"fg:#636da6\"\n\n[custom.window_zoom]\nwhen = 'test \"${TMUX_WINDOW_ACTIVE:-0}\" = \"1\" && test \"${TMUX_WINDOW_ZOOMED_FLAG:-0}\" = \"1\"'\ncommand = 'printf \"🔍\"'\nformat = \" $output\"\nstyle = \"fg:#ffc777\"\n",
+    "right_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$time$custom\"\nadd_newline = false\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#4fd6be\"\ntime_format = \"%H:%M:%S\"\n\n[custom.host]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_HOST_SHORT:-$(hostname -s)}\"'\nformat = \"on [$output]($style) \"\nstyle = \"fg:#c3e88d\"\n\n[custom.window_count]\nwhen = \"true\"\nshell = \"bash\"\ncommand = 'printf \"%s\" \"${TMUX_SESSION_WINDOWS:-1}\"'\nformat = \"[󰖲 $output]($style)\"\nstyle = \"fg:#fca7ea\"\n",
+    "full_toml": "\"$schema\" = 'https://starship.rs/config-schema.json'\nformat = \"$custom$time\"\nadd_newline = false\n\n[custom.prefix_active]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" = \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"bg:#82aaff fg:#1e2030 bold\"\n\n[custom.session_normal]\nwhen = 'test \"${TMUX_CLIENT_PREFIX:-0}\" != \"1\"'\ncommand = 'printf \"󰇄 %s\" \"${TMUX_SESSION_NAME:-tmux}\"'\nformat = \"[$output]($style) \"\nstyle = \"fg:#636da6\"\n\n[time]\ndisabled = false\nformat = \"[$time]($style) \"\nstyle = \"fg:#4fd6be\"\ntime_format = \"%H:%M:%S\"\n"
+  }
+]

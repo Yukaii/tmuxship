@@ -1,0 +1,23 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+format = "$time$custom"
+add_newline = false
+
+[time]
+disabled = false
+format = "[$time]($style) "
+style = "fg:#4fd6be"
+time_format = "%H:%M:%S"
+
+[custom.host]
+when = "true"
+shell = "bash"
+command = 'printf "%s" "${TMUX_HOST_SHORT:-$(hostname -s)}"'
+format = "on [$output]($style) "
+style = "fg:#c3e88d"
+
+[custom.window_count]
+when = "true"
+shell = "bash"
+command = 'printf "%s" "${TMUX_SESSION_WINDOWS:-1}"'
+format = "[󰖲 $output]($style)"
+style = "fg:#fca7ea"

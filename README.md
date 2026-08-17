@@ -11,7 +11,8 @@ Use the full power of Starship to style your tmux status bar, with automatic acc
 
 ## Features
 
-- **Full Starship compatibility** — Use any Starship module, prompt, or theme in your tmux status bar.
+- **Built-in Theme Suite & Live Preview** — Browse, preview, and activate legendary themes (Rosé Pine, Catppuccin, Tokyo Night, Nord, Gruvbox, Dracula, Kanagawa, and more) with zero configuration.
+- **Full Starship compatibility** — Use any Starship module, prompt, or custom styling in your tmux status bar.
 - **Rich tmux context** — Session, window, pane, and client variables are automatically injected as `TMUX_*` environment variables.
 - **Per-side configuration** — Separate Starship configs for `status-left`, `status-right`, and `window-status` (center).
 - **Prefix highlighting** — Style your status bar differently when the tmux prefix key is active.
@@ -31,17 +32,32 @@ Use the full power of Starship to style your tmux status bar, with automatic acc
 cargo install tmuxship
 ```
 
-### 2. Copy example configs
+### 2. Choose a Theme
+
+Preview all built-in themes in your terminal with live ANSI mockups:
 
 ```bash
-cp examples/starship.toml ~/.tmux/starship.toml
-cp examples/.right.toml   ~/.tmux/.right.toml
-cp examples/.center.toml  ~/.tmux/.center.toml
+tmuxship theme preview
 ```
 
-### 3. Configure tmux
+Or preview a specific theme like Rosé Pine or Catppuccin:
+
+```bash
+tmuxship theme preview rose-pine
+tmuxship theme preview catppuccin-mocha
+```
+
+### 3. Activate in tmux
 
 Add to `~/.tmux.conf`:
+
+```tmux
+setenv -g TMUX_SHIP_THEME "rose-pine"
+
+run-shell 'tmuxship apply'
+```
+
+*Or if you want to use custom config files:*
 
 ```tmux
 setenv -g TMUX_SHIP_LEFT_CONFIG   "$HOME/.tmux/starship.toml"
@@ -55,6 +71,58 @@ run-shell 'tmuxship apply'
 
 ```bash
 tmux source ~/.tmux.conf
+```
+
+---
+
+## Built-in Themes
+
+tmuxship includes built-in presets for legendary terminal themes:
+
+| Theme ID | Name | Variant | Inspiration / Origin |
+|---|---|---|---|
+| `rose-pine` | Rosé Pine | Dark | [rose-pine/tmux](https://github.com/rose-pine/tmux) |
+| `rose-pine-moon` | Rosé Pine Moon | Dark | [rose-pine/tmux](https://github.com/rose-pine/tmux) |
+| `rose-pine-dawn` | Rosé Pine Dawn | Light | [rose-pine/tmux](https://github.com/rose-pine/tmux) |
+| `catppuccin-mocha` | Catppuccin Mocha | Dark | [catppuccin/tmux](https://github.com/catppuccin/tmux) |
+| `catppuccin-macchiato` | Catppuccin Macchiato | Dark | [catppuccin/tmux](https://github.com/catppuccin/tmux) |
+| `catppuccin-frappe` | Catppuccin Frappé | Dark | [catppuccin/tmux](https://github.com/catppuccin/tmux) |
+| `catppuccin-latte` | Catppuccin Latte | Light | [catppuccin/tmux](https://github.com/catppuccin/tmux) |
+| `tokyo-night` | Tokyo Night | Dark | Tokyo Night |
+| `tokyo-night-moon` | Tokyo Night Moon | Dark | Tokyo Night Moon |
+| `nord` | Nord | Dark | Arctic Ice Studio Nord |
+| `gruvbox-dark` | Gruvbox Dark | Dark | morhetz Gruvbox |
+| `gruvbox-light` | Gruvbox Light | Light | morhetz Gruvbox |
+| `dracula` | Dracula | Dark | Zeno Rocha Dracula |
+| `kanagawa` | Kanagawa | Dark | rebelot Kanagawa Wave |
+| `onedark` | One Dark | Dark | Atom One Dark |
+| `solarized-dark` | Solarized Dark | Dark | Ethan Schoonover Solarized |
+| `solarized-light` | Solarized Light | Light | Ethan Schoonover Solarized |
+
+### Theme CLI Commands
+
+```bash
+# List all available themes
+tmuxship theme list
+tmuxship theme list --json
+
+# Preview themes with realistic terminal mockups
+tmuxship theme preview
+tmuxship theme preview rose-pine
+tmuxship theme preview --filter light
+
+# Show Starship TOML configuration for a theme
+tmuxship theme show rose-pine --side left
+tmuxship theme show catppuccin-mocha --side all
+
+# Export theme configs to a directory
+tmuxship theme export rose-pine --dir ./my-theme
+
+# Install theme directly to ~/.tmux/
+tmuxship theme install rose-pine
+
+# Print tmux.conf snippet for quick activation
+tmuxship theme init rose-pine
 ```
 
 ---
@@ -76,12 +144,18 @@ You can mix both modes: use `tmuxship apply` for the frame, and override a singl
 
 | Command | Description |
 |---|---|
-| `tmuxship left` | Render the left status segment |
-| `tmuxship right` | Render the right status segment |
-| `tmuxship center` | Render the window status segment |
+| `tmuxship left` | Render the left status segment (supports `--theme <id>` and `--config <path>`) |
+| `tmuxship right` | Render the right status segment (supports `--theme <id>` and `--config <path>`) |
+| `tmuxship center` | Render the window status segment (supports `--theme <id>` and `--config <path>`) |
 | `tmuxship full` | Render all segments |
-| `tmuxship emit-tmux-conf` | Print the generated tmux config (dry-run) |
-| `tmuxship apply` | Apply the generated config to the running tmux server |
+| `tmuxship emit-tmux-conf` | Print the generated tmux config (dry-run, supports `--theme <id>`) |
+| `tmuxship apply` | Apply the generated config to the running tmux server (supports `--theme <id>`) |
+| `tmuxship theme list` | List all built-in themes (supports `--json` and `--filter`) |
+| `tmuxship theme preview` | Preview themes with colored terminal status bar mockups |
+| `tmuxship theme show` | Print Starship TOML configuration for a theme |
+| `tmuxship theme export` | Export a theme's config files to a folder |
+| `tmuxship theme install` | Install theme files to `~/.tmux/` |
+| `tmuxship theme init` | Print ready-to-use `~/.tmux.conf` snippet for a theme |
 
 ---
 
@@ -94,16 +168,17 @@ tmuxship resolves Starship config files for each side (`left`, `right`, `center`
 1. `--config` flag
 2. `TMUX_SHIP_<SIDE>_CONFIG` environment variable (e.g. `TMUX_SHIP_LEFT_CONFIG`)
 3. `STARSHIP_CONFIG`
-4. `$XDG_CONFIG_HOME/tmux/.<side>.toml`
-5. `$XDG_CONFIG_HOME/tmux/starship.toml`
-6. `$XDG_CONFIG_HOME/starship/.<side>.toml`
-7. `$XDG_CONFIG_HOME/starship/starship.toml`
-8. `$HOME/.config/tmux/.<side>.toml`
-9. `$HOME/.config/tmux/starship.toml`
-10. `$HOME/.tmux/.<side>.toml`
-11. `$HOME/.tmux/starship.toml`
-12. `$HOME/.config/starship/.<side>.toml`
-13. `$HOME/.config/starship/starship.toml`
+4. `--theme` flag or `TMUX_SHIP_THEME` environment variable (built-in theme preset)
+5. `$XDG_CONFIG_HOME/tmux/.<side>.toml`
+6. `$XDG_CONFIG_HOME/tmux/starship.toml`
+7. `$XDG_CONFIG_HOME/starship/.<side>.toml`
+8. `$XDG_CONFIG_HOME/starship/starship.toml`
+9. `$HOME/.config/tmux/.<side>.toml`
+10. `$HOME/.config/tmux/starship.toml`
+11. `$HOME/.tmux/.<side>.toml`
+12. `$HOME/.tmux/starship.toml`
+13. `$HOME/.config/starship/.<side>.toml`
+14. `$HOME/.config/starship/starship.toml`
 
 ### Complete tmux.conf Example
 

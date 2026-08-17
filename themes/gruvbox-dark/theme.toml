@@ -1,0 +1,26 @@
+name = "Gruvbox Dark"
+description = "Retro groove warm color scheme with earthy autumn tones"
+author = "morhetz"
+variant = "dark"
+window_separator = " • "
+
+[[swatches]]
+name = "Yellow"
+hex = "#fabd2f"
+
+[[swatches]]
+name = "Green"
+hex = "#b8bb26"
+
+[[swatches]]
+name = "Aqua"
+hex = "#8ec07c"
+
+[[swatches]]
+name = "Blue"
+hex = "#83a598"
+
+[[swatches]]
+name = "Orange"
+hex = "#fe8019"
+

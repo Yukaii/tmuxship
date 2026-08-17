@@ -1,0 +1,26 @@
+name = "Tokyo Night Moon"
+description = "Dark blue hue variant of Tokyo Night with midnight aesthetics"
+author = "Tokyo Night"
+variant = "dark"
+window_separator = " • "
+
+[[swatches]]
+name = "Blue"
+hex = "#82aaff"
+
+[[swatches]]
+name = "Teal"
+hex = "#4fd6be"
+
+[[swatches]]
+name = "Green"
+hex = "#c3e88d"
+
+[[swatches]]
+name = "Pink"
+hex = "#fca7ea"
+
+[[swatches]]
+name = "Yellow"
+hex = "#ffc777"
+

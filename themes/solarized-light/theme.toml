@@ -1,0 +1,26 @@
+name = "Solarized Light"
+description = "Scientific light color scheme carefully balanced for optimal readability"
+author = "Ethan Schoonover"
+variant = "light"
+window_separator = " • "
+
+[[swatches]]
+name = "Blue"
+hex = "#268bd2"
+
+[[swatches]]
+name = "Cyan"
+hex = "#2aa198"
+
+[[swatches]]
+name = "Green"
+hex = "#859900"
+
+[[swatches]]
+name = "Yellow"
+hex = "#b58900"
+
+[[swatches]]
+name = "Violet"
+hex = "#6c71c4"
+

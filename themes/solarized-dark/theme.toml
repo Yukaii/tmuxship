@@ -1,0 +1,26 @@
+name = "Solarized Dark"
+description = "Precision color scheme designed for prolonged eye comfort in terminal workstations"
+author = "Ethan Schoonover"
+variant = "dark"
+window_separator = " • "
+
+[[swatches]]
+name = "Blue"
+hex = "#268bd2"
+
+[[swatches]]
+name = "Cyan"
+hex = "#2aa198"
+
+[[swatches]]
+name = "Green"
+hex = "#859900"
+
+[[swatches]]
+name = "Yellow"
+hex = "#b58900"
+
+[[swatches]]
+name = "Violet"
+hex = "#6c71c4"
+

@@ -1,0 +1,26 @@
+name = "Gruvbox Light"
+description = "Light variant of retro groove warm palette with mellow parchment tones"
+author = "morhetz"
+variant = "light"
+window_separator = " • "
+
+[[swatches]]
+name = "Yellow"
+hex = "#d79921"
+
+[[swatches]]
+name = "Green"
+hex = "#98971a"
+
+[[swatches]]
+name = "Aqua"
+hex = "#689d6a"
+
+[[swatches]]
+name = "Blue"
+hex = "#458588"
+
+[[swatches]]
+name = "Orange"
+hex = "#af3a03"
+

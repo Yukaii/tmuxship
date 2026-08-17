@@ -1,0 +1,21 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+format = "$custom$time"
+add_newline = false
+
+[custom.prefix_active]
+when = 'test "${TMUX_CLIENT_PREFIX:-0}" = "1"'
+command = 'printf "󰇄 %s" "${TMUX_SESSION_NAME:-tmux}"'
+format = "[$output]($style) "
+style = "bg:#eb6f92 fg:#232136 bold"
+
+[custom.session_normal]
+when = 'test "${TMUX_CLIENT_PREFIX:-0}" != "1"'
+command = 'printf "󰇄 %s" "${TMUX_SESSION_NAME:-tmux}"'
+format = "[$output]($style) "
+style = "fg:#908caa"
+
+[time]
+disabled = false
+format = "[$time]($style) "
+style = "fg:#9ccfd8"
+time_format = "%H:%M:%S"

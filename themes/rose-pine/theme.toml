@@ -1,0 +1,30 @@
+name = "Rosé Pine"
+description = "All natural pine, faux fur and a bit of soho vibes for the classy minimalist"
+author = "Rose Pine"
+variant = "dark"
+window_separator = " • "
+
+[[swatches]]
+name = "Love"
+hex = "#eb6f92"
+
+[[swatches]]
+name = "Gold"
+hex = "#f6c177"
+
+[[swatches]]
+name = "Rose"
+hex = "#ebbcba"
+
+[[swatches]]
+name = "Pine"
+hex = "#31748f"
+
+[[swatches]]
+name = "Foam"
+hex = "#9ccfd8"
+
+[[swatches]]
+name = "Iris"
+hex = "#c4a7e7"
+

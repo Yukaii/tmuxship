@@ -1,0 +1,26 @@
+name = "Catppuccin Macchiato"
+description = "Medium-contrast dark flavor with smooth pastel undertones"
+author = "Catppuccin Org"
+variant = "dark"
+window_separator = " • "
+
+[[swatches]]
+name = "Teal"
+hex = "#8bd5ca"
+
+[[swatches]]
+name = "Blue"
+hex = "#8aadf4"
+
+[[swatches]]
+name = "Green"
+hex = "#a6da95"
+
+[[swatches]]
+name = "Peach"
+hex = "#f5a97f"
+
+[[swatches]]
+name = "Mauve"
+hex = "#c6a0f6"
+
