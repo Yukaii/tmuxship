@@ -12,7 +12,8 @@ export default defineConfig({
     siteTitle: 'tmuxship',
     nav: [
       { text: 'Guide', link: '/guide/getting-started' },
-      { text: 'Themes Previewer', link: '/themes/' },
+      { text: 'Theme Builder', link: '/themes/' },
+      { text: 'Segments', link: '/guide/segments' },
       { text: 'Configuration', link: '/guide/configuration' },
       { text: 'CLI', link: '/guide/cli' },
     ],
@@ -23,14 +24,15 @@ export default defineConfig({
           { text: 'Introduction', link: '/guide/getting-started' },
           { text: 'How It Works', link: '/guide/how-it-works' },
           { text: 'Configuration', link: '/guide/configuration' },
+          { text: 'Segment Customization', link: '/guide/segments' },
           { text: 'CLI Reference', link: '/guide/cli' },
           { text: 'tmux Variables', link: '/guide/variables' },
         ]
       },
       {
-        text: 'Themes',
+        text: 'Themes & Builder',
         items: [
-          { text: 'Theme Previewer', link: '/themes/' },
+          { text: 'Online Theme & Segment Builder', link: '/themes/' },
           { text: 'Contributing a Theme', link: '/themes/contributing' },
         ]
       }

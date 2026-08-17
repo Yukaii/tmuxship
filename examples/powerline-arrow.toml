@@ -1,0 +1,71 @@
+# Powerline Classic Arrow Segments Example
+# Classic continuous powerline arrow transitions ( and )
+# Usage:
+#   cp examples/powerline-arrow.toml ~/.tmux/tmuxship.toml
+#   In ~/.tmux.conf: run-shell 'tmuxship apply'
+
+name = "Powerline Classic Arrow"
+window_separator = ""
+
+# --- Left Status: Continuous Powerline Arrows () ---
+[left]
+"$schema" = 'https://starship.rs/config-schema.json'
+format = "$custom"
+add_newline = false
+
+[left.custom.prefix_active]
+shell = "bash"
+when = 'test "${TMUX_CLIENT_PREFIX:-0}" = "1"'
+command = 'printf "#[bg=#eb6f92,fg=#191724,bold] 󰇄 %s #[bg=default,fg=#eb6f92]" "${TMUX_SESSION_NAME:-tmux}"'
+format = "$output "
+
+[left.custom.session_normal]
+shell = "bash"
+when = 'test "${TMUX_CLIENT_PREFIX:-0}" != "1"'
+command = 'printf "#[bg=#31748f,fg=#e0def4,bold] 󰇄 %s #[bg=default,fg=#31748f]" "${TMUX_SESSION_NAME:-tmux}"'
+format = "$output "
+
+# --- Center Status: Powerline Arrow Tabs ---
+[center]
+format = "$custom"
+add_newline = false
+
+[center.custom.window_active]
+when = 'test "${TMUX_WINDOW_ACTIVE:-0}" = "1"'
+command = 'printf "#[bg=#ebbcba,fg=#191724,bold] #I #[bg=#26233a,fg=#e0def4,bold] #W #[bg=default,fg=#26233a]"'
+format = "$output "
+
+[center.custom.window_inactive]
+when = 'test "${TMUX_WINDOW_ACTIVE:-0}" != "1"'
+command = 'printf "#[bg=#1f1d2e,fg=#6e6a86] #I #W #[bg=default,fg=#1f1d2e]"'
+format = "$output "
+
+[center.custom.window_zoom]
+when = 'test "${TMUX_WINDOW_ACTIVE:-0}" = "1" && test "${TMUX_WINDOW_ZOOMED_FLAG:-0}" = "1"'
+command = 'printf " 🔍"'
+format = "$output"
+style = "fg:#f6c177"
+
+# --- Right Status: Connected Right Arrows () ---
+[right]
+"$schema" = 'https://starship.rs/config-schema.json'
+format = "$custom"
+add_newline = false
+
+[right.custom.host]
+when = "true"
+shell = "bash"
+command = 'printf "#[bg=default,fg=#26233a]#[bg=#26233a,fg=#9ccfd8] 󰒋 %s " "${TMUX_HOST_SHORT:-$(hostname -s)}"'
+format = "$output"
+
+[right.custom.windows]
+when = "true"
+shell = "bash"
+command = 'printf "#[bg=#26233a,fg=#c4a7e7]#[bg=#c4a7e7,fg=#191724,bold] 󰖲 %s " "${TMUX_SESSION_WINDOWS:-1}"'
+format = "$output"
+
+[right.custom.time]
+when = "true"
+shell = "bash"
+command = 'printf "#[bg=#c4a7e7,fg=#f6c177]#[bg=#f6c177,fg=#191724,bold] 󱑂 %s " "$(date +%H:%M)"'
+format = "$output"

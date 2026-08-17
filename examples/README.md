@@ -4,6 +4,11 @@ This directory contains example Starship configurations for use with tmuxship.
 
 ## Files
 
+- **`tmuxship.toml`** - Default unified single-file configuration
+- **`powerline-rounded.toml`** - Rounded bubble pills (`` / ``) similar to `catppuccin/tmux` and `rose-pine/tmux`
+- **`powerline-slanted.toml`** - Modern angled / slanted powerline separators (`` / ``)
+- **`powerline-arrow.toml`** - Classic powerline arrows (`` / ``)
+- **`custom-segments.toml`** - Rich multi-segment dashboard with git, directory, host, battery, and clock
 - **`starship.toml`** - Basic left status with session name and prefix highlighting
 - **`.right.toml`** - Right status with time, host, and window count
 - **`.center.toml`** - Window status with active/inactive styling and zoom indicator

@@ -1,0 +1,77 @@
+# Powerline Slanted / Angled Segments Example
+# Modern angled powerline transitions ( /  /  / )
+# Usage:
+#   cp examples/powerline-slanted.toml ~/.tmux/tmuxship.toml
+#   In ~/.tmux.conf: run-shell 'tmuxship apply'
+
+name = "Powerline Slanted"
+window_separator = ""
+
+# --- Left Status: Slanted Session & Git ---
+[left]
+"$schema" = 'https://starship.rs/config-schema.json'
+format = "$custom"
+add_newline = false
+
+[left.custom.prefix_active]
+shell = "bash"
+when = 'test "${TMUX_CLIENT_PREFIX:-0}" = "1"'
+command = 'printf "#[bg=#f7768e,fg=#1a1b26,bold] 󰇄 %s #[bg=default,fg=#f7768e]" "${TMUX_SESSION_NAME:-tmux}"'
+format = "$output "
+
+[left.custom.session_normal]
+shell = "bash"
+when = 'test "${TMUX_CLIENT_PREFIX:-0}" != "1"'
+command = 'printf "#[bg=#7aa2f7,fg=#1a1b26,bold] 󰇄 %s #[bg=default,fg=#7aa2f7]" "${TMUX_SESSION_NAME:-tmux}"'
+format = "$output "
+
+[left.custom.directory]
+shell = "bash"
+when = 'test -n "${TMUX_PANE_CURRENT_PATH}"'
+command = 'p="${TMUX_PANE_CURRENT_PATH}"; p="${p/#$HOME/~}"; printf "#[bg=#24283b,fg=#c0caf5] 󰉋 %s #[bg=default,fg=#24283b]" "$p"'
+format = "$output "
+
+# --- Center Status: Slanted Window Tabs ---
+[center]
+format = "$custom"
+add_newline = false
+
+[center.custom.window_active]
+when = 'test "${TMUX_WINDOW_ACTIVE:-0}" = "1"'
+command = 'printf "#[bg=#bb9af7,fg=#1a1b26,bold] #I #[bg=#24283b,fg=#c0caf5,bold] #W #[bg=default,fg=#24283b]"'
+format = "$output "
+
+[center.custom.window_inactive]
+when = 'test "${TMUX_WINDOW_ACTIVE:-0}" != "1"'
+command = 'printf "#[bg=#1f2335,fg=#565f89] #I #W #[bg=default,fg=#1f2335]"'
+format = "$output "
+
+[center.custom.window_zoom]
+when = 'test "${TMUX_WINDOW_ACTIVE:-0}" = "1" && test "${TMUX_WINDOW_ZOOMED_FLAG:-0}" = "1"'
+command = 'printf " 󰁌"'
+format = "$output"
+style = "fg:#e0af68"
+
+# --- Right Status: Slanted Right Powerlines () ---
+[right]
+"$schema" = 'https://starship.rs/config-schema.json'
+format = "$custom"
+add_newline = false
+
+[right.custom.cpu]
+when = "true"
+shell = "bash"
+command = 'load=$(uptime | awk -F "load average:" "{print \\$2}" | cut -d, -f1 | tr -d " "); printf "#[bg=default,fg=#414868]#[bg=#414868,fg=#7dcfff] 󰍛 %s " "$load"'
+format = "$output"
+
+[right.custom.host]
+when = "true"
+shell = "bash"
+command = 'printf "#[bg=#414868,fg=#7aa2f7]#[bg=#7aa2f7,fg=#1a1b26,bold] 󰒋 %s " "${TMUX_HOST_SHORT:-$(hostname -s)}"'
+format = "$output"
+
+[right.custom.time]
+when = "true"
+shell = "bash"
+command = 'printf "#[bg=#7aa2f7,fg=#9ece6a]#[bg=#9ece6a,fg=#1a1b26,bold] 󱑂 %s " "$(date +%H:%M)"'
+format = "$output"
