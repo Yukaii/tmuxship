@@ -134,6 +134,62 @@ fn center_side_uses_side_specific_file() {
 }
 
 #[test]
+fn unified_tmuxship_toml_is_discovered_and_extracted() {
+    let dir = tempfile::tempdir().unwrap();
+    let tmux_root = dir.path().join(".config/tmux");
+    fs::create_dir_all(&tmux_root).unwrap();
+    let unified = tmux_root.join("tmuxship.toml");
+    fs::write(
+        &unified,
+        r#"
+[left]
+format = "$custom"
+[left.custom.session]
+command = "printf 'left'"
+
+[center]
+format = "$custom"
+[center.custom.window]
+command = "printf 'center'"
+"#,
+    )
+    .unwrap();
+
+    let env = env_with_home(dir.path());
+    let resolved_left = resolve_config(Side::Left, None, &env).unwrap();
+    assert_eq!(resolved_left.source, "tmux-unified");
+    assert!(resolved_left.config_path.is_file());
+    let left_content = fs::read_to_string(resolved_left.config_path).unwrap();
+    assert!(left_content.contains("custom.session"));
+
+    let resolved_center = resolve_config(Side::Center, None, &env).unwrap();
+    assert_eq!(resolved_center.source, "tmux-unified");
+    let center_content = fs::read_to_string(resolved_center.config_path).unwrap();
+    assert!(center_content.contains("custom.window"));
+}
+
+#[test]
+fn tmux_ship_config_env_var_works() {
+    let dir = tempfile::tempdir().unwrap();
+    let cfg = dir.path().join("my-unified.toml");
+    fs::write(
+        &cfg,
+        r#"
+[left]
+format = "left-status"
+"#,
+    )
+    .unwrap();
+
+    let mut env = env_with_home(dir.path());
+    env.insert("TMUX_SHIP_CONFIG".into(), cfg.to_string_lossy().into());
+
+    let resolved = resolve_config(Side::Left, None, &env).unwrap();
+    assert_eq!(resolved.source, "TMUX_SHIP_CONFIG");
+    assert!(resolved.config_path.is_file());
+}
+
+#[test]
 fn error_when_missing() {
     let dir = tempfile::tempdir().unwrap();
     let env = env_with_home(dir.path());

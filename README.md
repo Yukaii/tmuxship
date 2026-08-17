@@ -52,12 +52,21 @@ tmuxship theme preview catppuccin-mocha
 Add to `~/.tmux.conf`:
 
 ```tmux
+# Option A: Activate a built-in theme directly (zero config needed)
 setenv -g TMUX_SHIP_THEME "rose-pine"
 
 run-shell 'tmuxship apply'
 ```
 
-*Or if you want to use custom config files:*
+*Or Option B: Use a single unified `tmuxship.toml` configuration file:*
+
+```tmux
+setenv -g TMUX_SHIP_CONFIG "$HOME/.tmux/tmuxship.toml"
+
+run-shell 'tmuxship apply'
+```
+
+*Or Option C: Use individual segment files (legacy support):*
 
 ```tmux
 setenv -g TMUX_SHIP_LEFT_CONFIG   "$HOME/.tmux/starship.toml"
@@ -165,20 +174,19 @@ You can mix both modes: use `tmuxship apply` for the frame, and override a singl
 
 tmuxship resolves Starship config files for each side (`left`, `right`, `center`) in the following order:
 
-1. `--config` flag
+1. `--config` flag (supports unified `tmuxship.toml` or single side files)
 2. `TMUX_SHIP_<SIDE>_CONFIG` environment variable (e.g. `TMUX_SHIP_LEFT_CONFIG`)
-3. `STARSHIP_CONFIG`
-4. `--theme` flag or `TMUX_SHIP_THEME` environment variable (built-in theme preset)
-5. `$XDG_CONFIG_HOME/tmux/.<side>.toml`
-6. `$XDG_CONFIG_HOME/tmux/starship.toml`
-7. `$XDG_CONFIG_HOME/starship/.<side>.toml`
-8. `$XDG_CONFIG_HOME/starship/starship.toml`
-9. `$HOME/.config/tmux/.<side>.toml`
-10. `$HOME/.config/tmux/starship.toml`
-11. `$HOME/.tmux/.<side>.toml`
-12. `$HOME/.tmux/starship.toml`
-13. `$HOME/.config/starship/.<side>.toml`
-14. `$HOME/.config/starship/starship.toml`
+3. `TMUX_SHIP_CONFIG` environment variable (unified `tmuxship.toml`)
+4. `STARSHIP_CONFIG`
+5. `--theme` flag or `TMUX_SHIP_THEME` environment variable (built-in theme preset)
+6. `$XDG_CONFIG_HOME/tmuxship/tmuxship.toml` or `$XDG_CONFIG_HOME/tmux/tmuxship.toml`
+7. `$XDG_CONFIG_HOME/tmux/.<side>.toml` or `starship.toml`
+8. `$XDG_CONFIG_HOME/starship/.<side>.toml` or `starship.toml`
+9. `$HOME/.config/tmuxship/tmuxship.toml` or `$HOME/.config/tmux/tmuxship.toml`
+10. `$HOME/.tmux/tmuxship.toml`
+11. `$HOME/.config/tmux/.<side>.toml` or `starship.toml`
+12. `$HOME/.tmux/.<side>.toml` or `starship.toml`
+13. `$HOME/.config/starship/.<side>.toml` or `starship.toml`
 
 ### Complete tmux.conf Example
 

@@ -242,6 +242,8 @@ set-hook -g client-session-changed 'refresh-client -S'
 set-hook -g client-attached        'refresh-client -S'
 set-hook -g pane-focus-in          'refresh-client -S'
 set -g window-status-style "bg=default,fg=default"`;
+  } else if (currentCodeTab === "unified") {
+    codeBlock.textContent = currentTheme.unified_toml || `# ${currentTheme.name} Theme`;
   } else if (currentCodeTab === "starship") {
     codeBlock.textContent = currentTheme.left_toml || "# Left config";
   } else if (currentCodeTab === "center") {
@@ -314,30 +316,22 @@ function selectTheme(themeId) {
   }
 }
 
-// Download Theme TOML Files
+// Download Theme TOML File (Single unified file)
 function downloadThemeFiles() {
   if (!currentTheme) return;
   
-  const files = [
-    { name: "starship.toml", content: currentTheme.left_toml },
-    { name: ".center.toml", content: currentTheme.center_toml },
-    { name: ".right.toml", content: currentTheme.right_toml },
-    { name: ".full.toml", content: currentTheme.full_toml },
-  ];
+  const content = currentTheme.unified_toml || `# ${currentTheme.name}\n${currentTheme.left_toml}`;
+  const blob = new Blob([content], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${currentTheme.id}.toml`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 
-  files.forEach(file => {
-    const blob = new Blob([file.content], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = file.name;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  });
-
-  showToast(`Downloaded config files for ${currentTheme.name}!`);
+  showToast(`Downloaded ${currentTheme.id}.toml!`);
 }
 
 // Setup Event Listeners

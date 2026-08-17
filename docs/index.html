@@ -137,11 +137,11 @@
         <div id="palette-row" class="palette-row"></div>
 
         <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-          <button class="btn btn-primary" onclick="copyToClipboard(document.getElementById('code-block').textContent, 'Copied tmux.conf snippet!')">
-            <span>📋 Copy tmux.conf Setup</span>
+          <button class="btn btn-primary" onclick="copyToClipboard(document.getElementById('code-block').textContent, 'Copied snippet!')">
+            <span>📋 Copy Snippet</span>
           </button>
           <button class="btn btn-secondary" onclick="downloadThemeFiles()">
-            <span>⬇ Download TOML Files</span>
+            <span>⬇ Download Theme TOML</span>
           </button>
         </div>
       </div>
@@ -150,6 +150,7 @@
         <div class="code-box-header">
           <div class="code-tabs">
             <button class="code-tab active" data-tab="tmux">~/.tmux.conf</button>
+            <button class="code-tab" data-tab="unified">tmuxship.toml</button>
             <button class="code-tab" data-tab="starship">starship.toml</button>
             <button class="code-tab" data-tab="center">.center.toml</button>
             <button class="code-tab" data-tab="right">.right.toml</button>

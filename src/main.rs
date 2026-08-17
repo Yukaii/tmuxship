@@ -108,8 +108,8 @@ enum ThemeCommand {
         /// Theme name or ID (e.g. rose-pine, catppuccin-mocha)
         theme: String,
 
-        /// Specific side to display
-        #[arg(short, long, value_enum, default_value = "all")]
+        /// Specific side or unified view to display
+        #[arg(short, long, value_enum, default_value = "unified")]
         side: ShowSide,
     },
 
@@ -147,6 +147,7 @@ enum ThemeCommand {
 
 #[derive(ValueEnum, Clone, Copy, Debug, PartialEq, Eq)]
 enum ShowSide {
+    Unified,
     Left,
     Center,
     Right,
@@ -273,14 +274,13 @@ fn handle_theme_command(cmd: ThemeCommand, env: &HashMap<String, String>) -> Res
             })?;
 
             match side {
+                ShowSide::Unified => print!("{}", t.unified_toml),
                 ShowSide::Left => print!("{}", t.left_toml),
                 ShowSide::Center => print!("{}", t.center_toml),
                 ShowSide::Right => print!("{}", t.right_toml),
                 ShowSide::Full => print!("{}", t.full_toml),
                 ShowSide::All => {
-                    println!("# === Left Status (starship.toml) ===\n{}", t.left_toml);
-                    println!("# === Center / Window Status (.center.toml) ===\n{}", t.center_toml);
-                    println!("# === Right Status (.right.toml) ===\n{}", t.right_toml);
+                    println!("# === Unified Theme TOML ===\n{}", t.unified_toml);
                 }
             }
             Ok(())
@@ -294,7 +294,7 @@ fn handle_theme_command(cmd: ThemeCommand, env: &HashMap<String, String>) -> Res
             })?;
             theme::export_theme(&t, &dir)?;
             println!(
-                "\x1b[32m✔\x1b[0m Exported '{}' config files to {}",
+                "\x1b[32m✔\x1b[0m Exported '{}' unified & segment config files to {}",
                 t.name,
                 dir.display()
             );
@@ -313,10 +313,8 @@ fn handle_theme_command(cmd: ThemeCommand, env: &HashMap<String, String>) -> Res
                 t.name,
                 dest.display()
             );
-            println!("\nAdd to your ~/.tmux.conf:");
-            println!("  setenv -g TMUX_SHIP_LEFT_CONFIG   \"{}/starship.toml\"", dest.display());
-            println!("  setenv -g TMUX_SHIP_RIGHT_CONFIG  \"{}/.right.toml\"", dest.display());
-            println!("  setenv -g TMUX_SHIP_CENTER_CONFIG \"{}/.center.toml\"", dest.display());
+            println!("\nAdd to your ~/.tmux.conf (Unified single-file config):");
+            println!("  setenv -g TMUX_SHIP_CONFIG \"{}/tmuxship.toml\"", dest.display());
             println!("  run-shell 'tmuxship apply'\n");
             Ok(())
         }

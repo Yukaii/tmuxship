@@ -35,6 +35,18 @@ fn read_starship_config(
     };
     let raw = fs::read_to_string(&config.config_path)
         .with_context(|| format!("Failed to read {}", config.config_path.display()))?;
+    let toml_val: toml::Value = toml::from_str(&raw)
+        .with_context(|| format!("Failed to parse {}", config.config_path.display()))?;
+
+    let side_key = side.as_str();
+    if let Some(sub_val) = toml_val.get(side_key) {
+        if sub_val.is_table() {
+            let parsed: StarshipConfig = sub_val.clone().try_into()
+                .with_context(|| format!("Failed to parse [{}] from {}", side_key, config.config_path.display()))?;
+            return Ok(Some(parsed));
+        }
+    }
+
     let parsed = toml::from_str(&raw)
         .with_context(|| format!("Failed to parse {}", config.config_path.display()))?;
     Ok(Some(parsed))

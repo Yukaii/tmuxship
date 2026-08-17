@@ -58,14 +58,29 @@ pub fn export_theme(theme: &Theme, dest_dir: &Path) -> Result<()> {
     fs::create_dir_all(dest_dir)
         .with_context(|| format!("Failed to create directory at {}", dest_dir.display()))?;
 
-    fs::write(dest_dir.join("starship.toml"), &theme.left_toml)
-        .with_context(|| "Failed to write starship.toml")?;
-    fs::write(dest_dir.join(".right.toml"), &theme.right_toml)
-        .with_context(|| "Failed to write .right.toml")?;
-    fs::write(dest_dir.join(".center.toml"), &theme.center_toml)
-        .with_context(|| "Failed to write .center.toml")?;
-    fs::write(dest_dir.join(".full.toml"), &theme.full_toml)
-        .with_context(|| "Failed to write .full.toml")?;
+    // Write unified single file
+    fs::write(dest_dir.join(format!("{}.toml", theme.id)), &theme.unified_toml)
+        .with_context(|| "Failed to write theme.toml")?;
+    fs::write(dest_dir.join("tmuxship.toml"), &theme.unified_toml)
+        .with_context(|| "Failed to write tmuxship.toml")?;
+
+    // Also write individual side configs for maximum flexibility
+    if !theme.left_toml.is_empty() {
+        fs::write(dest_dir.join("starship.toml"), &theme.left_toml)
+            .with_context(|| "Failed to write starship.toml")?;
+    }
+    if !theme.right_toml.is_empty() {
+        fs::write(dest_dir.join(".right.toml"), &theme.right_toml)
+            .with_context(|| "Failed to write .right.toml")?;
+    }
+    if !theme.center_toml.is_empty() {
+        fs::write(dest_dir.join(".center.toml"), &theme.center_toml)
+            .with_context(|| "Failed to write .center.toml")?;
+    }
+    if !theme.full_toml.is_empty() {
+        fs::write(dest_dir.join(".full.toml"), &theme.full_toml)
+            .with_context(|| "Failed to write .full.toml")?;
+    }
 
     Ok(())
 }
@@ -81,11 +96,9 @@ pub fn install_theme(theme: &Theme, target_dir: Option<&Path>, force: bool) -> R
     };
 
     if dest.exists() && !force {
-        // Check if existing files would be overwritten
+        let unified = dest.join("tmuxship.toml");
         let left = dest.join("starship.toml");
-        let right = dest.join(".right.toml");
-        let center = dest.join(".center.toml");
-        if left.exists() || right.exists() || center.exists() {
+        if unified.exists() || left.exists() {
             return Err(anyhow!(
                 "Config files already exist in {}. Use --force to overwrite.",
                 dest.display()
