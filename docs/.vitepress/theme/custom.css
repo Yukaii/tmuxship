@@ -1,13 +1,46 @@
-/* Load JetBrains Mono Nerd Font from CDN */
+/* Load JetBrains Mono Nerd Font & Symbols Nerd Font locally */
 @font-face {
   font-family: 'JetBrainsMono Nerd Font';
-  src: url('https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.2.1/patched-fonts/JetBrainsMono/Ligatures/Regular/JetBrainsMonoNerdFont-Regular.woff2') format('woff2');
+  src: url('./fonts/JetBrainsMonoNerdFont-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrainsMono Nerd Font';
+  src: url('./fonts/JetBrainsMonoNerdFont-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono Nerd Font';
+  src: url('./fonts/JetBrainsMonoNerdFont-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono Nerd Font';
+  src: url('./fonts/JetBrainsMonoNerdFont-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Symbols Nerd Font';
+  src: url('./fonts/SymbolsNerdFont-Regular.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 
 :root {
+  --vp-font-family-mono: 'JetBrainsMono Nerd Font', 'JetBrains Mono Nerd Font', 'Symbols Nerd Font', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --vp-c-brand-1: #89b4fa;
   --vp-c-brand-2: #b4befe;
   --vp-c-brand-3: #74c7ec;
@@ -82,7 +115,7 @@
 .sim-status-bar {
   width: 100%;
   max-width: 960px;
-  font-family: 'JetBrainsMono Nerd Font', var(--vp-font-family-mono);
+  font-family: 'JetBrainsMono Nerd Font', 'JetBrains Mono Nerd Font', 'Symbols Nerd Font', var(--vp-font-family-mono);
   font-size: 0.95rem;
   display: flex;
   align-items: center;
