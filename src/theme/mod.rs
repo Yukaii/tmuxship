@@ -12,9 +12,13 @@ pub use catalog::ThemeVariant;
 /// Returns the cache directory for theme TOML files
 pub fn get_theme_cache_dir(theme_id: &str, env: &HashMap<String, String>) -> PathBuf {
     if let Some(xdg_cache) = env.get("XDG_CACHE_HOME") {
-        PathBuf::from(xdg_cache).join("tmuxship/themes").join(theme_id)
+        PathBuf::from(xdg_cache)
+            .join("tmuxship/themes")
+            .join(theme_id)
     } else if let Some(home) = env.get("HOME") {
-        PathBuf::from(home).join(".cache/tmuxship/themes").join(theme_id)
+        PathBuf::from(home)
+            .join(".cache/tmuxship/themes")
+            .join(theme_id)
     } else if let Some(cache) = dirs::cache_dir() {
         cache.join("tmuxship/themes").join(theme_id)
     } else {
@@ -29,8 +33,12 @@ pub fn ensure_theme_file(
     env: &HashMap<String, String>,
 ) -> Result<PathBuf> {
     let cache_dir = get_theme_cache_dir(&theme.id, env);
-    fs::create_dir_all(&cache_dir)
-        .with_context(|| format!("Failed to create cache directory at {}", cache_dir.display()))?;
+    fs::create_dir_all(&cache_dir).with_context(|| {
+        format!(
+            "Failed to create cache directory at {}",
+            cache_dir.display()
+        )
+    })?;
 
     let (filename, content) = match side {
         crate::config::Side::Left => ("starship.toml", &theme.left_toml),
@@ -46,8 +54,12 @@ pub fn ensure_theme_file(
     };
 
     if should_write {
-        fs::write(&target_path, content)
-            .with_context(|| format!("Failed to write cached theme file at {}", target_path.display()))?;
+        fs::write(&target_path, content).with_context(|| {
+            format!(
+                "Failed to write cached theme file at {}",
+                target_path.display()
+            )
+        })?;
     }
 
     Ok(target_path)
@@ -59,8 +71,11 @@ pub fn export_theme(theme: &Theme, dest_dir: &Path) -> Result<()> {
         .with_context(|| format!("Failed to create directory at {}", dest_dir.display()))?;
 
     // Write unified single file
-    fs::write(dest_dir.join(format!("{}.toml", theme.id)), &theme.unified_toml)
-        .with_context(|| "Failed to write theme.toml")?;
+    fs::write(
+        dest_dir.join(format!("{}.toml", theme.id)),
+        &theme.unified_toml,
+    )
+    .with_context(|| "Failed to write theme.toml")?;
     fs::write(dest_dir.join("tmuxship.toml"), &theme.unified_toml)
         .with_context(|| "Failed to write tmuxship.toml")?;
 

@@ -42,7 +42,7 @@ fn color_name_from_code(code: i32, bright: bool) -> Option<&'static str> {
 fn apply_color_sequence(params: &[&str], fg: bool, style: &mut Style) -> usize {
     if params.len() >= 2 && params[0] == "5" {
         if let Ok(n) = params[1].parse::<u8>() {
-            let colour = format!("colour{}", n);
+            let colour = format!("colour{n}");
             if fg {
                 style.fg = Some(colour);
             } else {
@@ -58,7 +58,7 @@ fn apply_color_sequence(params: &[&str], fg: bool, style: &mut Style) -> usize {
             params[2].parse::<u8>(),
             params[3].parse::<u8>(),
         ) {
-            let hex = format!("#{:02X}{:02X}{:02X}", r, g, b);
+            let hex = format!("#{r:02X}{g:02X}{b:02X}");
             if fg {
                 style.fg = Some(hex);
             } else {
@@ -127,10 +127,10 @@ fn apply_sgr(params: &[&str], style: &mut Style) {
 fn style_to_tmux(style: &Style) -> String {
     let mut parts: Vec<String> = Vec::new();
     if let Some(fg) = &style.fg {
-        parts.push(format!("fg={}", fg));
+        parts.push(format!("fg={fg}"));
     }
     if let Some(bg) = &style.bg {
-        parts.push(format!("bg={}", bg));
+        parts.push(format!("bg={bg}"));
     }
     if style.bold {
         parts.push("bold".into());
@@ -180,7 +180,7 @@ pub fn render_from_ansi(ansi: &str) -> String {
                     if prefix.is_empty() {
                         rendered.push_str(&buffer);
                     } else {
-                        rendered.push_str(&format!("{}{}#[default]", prefix, buffer));
+                        rendered.push_str(&format!("{prefix}{buffer}#[default]"));
                     }
                     buffer.clear();
                 }
@@ -205,7 +205,7 @@ pub fn render_from_ansi(ansi: &str) -> String {
         if prefix.is_empty() {
             rendered.push_str(&buffer);
         } else {
-            rendered.push_str(&format!("{}{}#[default]", prefix, buffer));
+            rendered.push_str(&format!("{prefix}{buffer}#[default]"));
         }
     }
 
@@ -264,8 +264,7 @@ fn tmux_env_vars(env: &HashMap<String, String>) -> Result<Vec<(String, String)>>
             .all(|c| c.is_ascii_graphic() && !c.is_whitespace())
         {
             return Err(anyhow!(
-                "TMUX_SHIP_TARGET contained invalid characters: {}",
-                t
+                "TMUX_SHIP_TARGET contained invalid characters: {t}"
             ));
         }
     }
@@ -290,15 +289,14 @@ fn tmux_env_vars(env: &HashMap<String, String>) -> Result<Vec<(String, String)>>
     for var in &vars {
         if !var.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
             return Err(anyhow!(
-                "TMUX_SHIP_TMUX_VARS contained an invalid tmux variable name: {}",
-                var
+                "TMUX_SHIP_TMUX_VARS contained an invalid tmux variable name: {var}"
             ));
         }
     }
 
     let format = vars
         .iter()
-        .map(|v| format!("#{{{}}}", v))
+        .map(|v| format!("#{{{v}}}"))
         .collect::<Vec<_>>()
         .join("\n");
 
@@ -341,7 +339,7 @@ fn tmux_env_vars(env: &HashMap<String, String>) -> Result<Vec<(String, String)>>
                     }
                 })
                 .collect();
-            (format!("TMUX_{}", sanitized), value.to_string())
+            (format!("TMUX_{sanitized}"), value.to_string())
         })
         .collect();
 

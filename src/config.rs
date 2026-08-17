@@ -94,14 +94,20 @@ pub fn extract_side_if_unified(
             let target_dir = cache_base.join(file_stem);
             fs::create_dir_all(&target_dir)?;
 
-            let target_path = target_dir.join(format!("{}.toml", side_key));
+            let target_path = target_dir.join(format!("{side_key}.toml"));
             let mut extracted_toml = toml::to_string_pretty(side_val)?;
 
             // If the root TOML has palettes/palette and side does not, attach it
             if let Some(palettes) = toml_val.get("palettes") {
-                extracted_toml.push_str(&format!("\n[palettes]\n{}", toml::to_string_pretty(palettes)?));
+                extracted_toml.push_str(&format!(
+                    "\n[palettes]\n{}",
+                    toml::to_string_pretty(palettes)?
+                ));
             } else if let Some(palette) = toml_val.get("palette") {
-                extracted_toml.push_str(&format!("\n[palette]\n{}", toml::to_string_pretty(palette)?));
+                extracted_toml.push_str(&format!(
+                    "\n[palette]\n{}",
+                    toml::to_string_pretty(palette)?
+                ));
             }
 
             let should_write = match fs::read_to_string(&target_path) {
@@ -151,7 +157,7 @@ pub fn resolve_config_with_theme(
     }
 
     // 2. Side-specific env var (e.g. TMUX_SHIP_LEFT_CONFIG)
-    let side_env_var = format!("TMUX_SHIP_{}_CONFIG", normalized_side);
+    let side_env_var = format!("TMUX_SHIP_{normalized_side}_CONFIG");
     if let Some(value) = env.get(&side_env_var) {
         let expanded = ensure_file(
             expand_user(Path::new(value)),
@@ -190,7 +196,9 @@ pub fn resolve_config_with_theme(
                 format!("theme:{}", theme.id),
             ));
         } else {
-            return Err(anyhow!("Unknown theme: '{}'. Run `tmuxship theme list` to see available themes.", name));
+            return Err(anyhow!(
+                "Unknown theme: '{name}'. Run `tmuxship theme list` to see available themes."
+            ));
         }
     }
 
@@ -231,7 +239,11 @@ pub fn resolve_config_with_theme(
         let unified_path = base.join("tmuxship.toml");
         if unified_path.is_file() {
             let final_path = extract_side_if_unified(&unified_path, side, env)?;
-            return Ok(ConfigResolution::new(side, final_path, format!("{}-unified", kind)));
+            return Ok(ConfigResolution::new(
+                side,
+                final_path,
+                format!("{kind}-unified"),
+            ));
         }
 
         // Check for side-specific file
@@ -258,7 +270,6 @@ pub fn resolve_config_with_theme(
     }
 
     Err(anyhow!(
-        "Unable to locate a Starship config file for tmuxship (side={:?})",
-        side
+        "Unable to locate a Starship config file for tmuxship (side={side:?})"
     ))
 }

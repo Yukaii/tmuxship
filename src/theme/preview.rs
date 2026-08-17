@@ -14,7 +14,7 @@ fn parse_hex_color(hex: &str) -> Option<(u8, u8, u8)> {
 
 pub fn hex_fg(hex: &str) -> String {
     if let Some((r, g, b)) = parse_hex_color(hex) {
-        format!("\x1b[38;2;{};{};{}m", r, g, b)
+        format!("\x1b[38;2;{r};{g};{b}m")
     } else {
         String::new()
     }
@@ -22,7 +22,7 @@ pub fn hex_fg(hex: &str) -> String {
 
 pub fn hex_bg(hex: &str) -> String {
     if let Some((r, g, b)) = parse_hex_color(hex) {
-        format!("\x1b[48;2;{};{};{}m", r, g, b)
+        format!("\x1b[48;2;{r};{g};{b}m")
     } else {
         String::new()
     }
@@ -54,13 +54,13 @@ pub fn format_styled(text: &str, style: &str) -> String {
     if ansi.is_empty() {
         text.to_string()
     } else {
-        format!("{}{}\x1b[0m", ansi, text)
+        format!("{ansi}{text}\x1b[0m")
     }
 }
 
 // Extract styles from theme TOML
 fn extract_custom_style(toml: &str, section: &str) -> Option<String> {
-    let target = format!("[custom.{}]", section);
+    let target = format!("[custom.{section}]");
     let mut in_section = false;
     for line in toml.lines() {
         let trimmed = line.trim();
@@ -113,8 +113,8 @@ pub fn render_preview_bar(theme: &Theme, prefix_active: bool, zoomed: bool) -> S
         .unwrap_or_else(|| "fg:#f6c177".into());
 
     let time_style = extract_time_style(&theme.right_toml).unwrap_or_else(|| "fg:#9ccfd8".into());
-    let host_style = extract_custom_style(&theme.right_toml, "host")
-        .unwrap_or_else(|| "fg:#31748f".into());
+    let host_style =
+        extract_custom_style(&theme.right_toml, "host").unwrap_or_else(|| "fg:#31748f".into());
     let count_style = extract_custom_style(&theme.right_toml, "window_count")
         .unwrap_or_else(|| "fg:#c4a7e7".into());
 
@@ -132,18 +132,18 @@ pub fn render_preview_bar(theme: &Theme, prefix_active: bool, zoomed: bool) -> S
     } else {
         String::new()
     };
-    let tab2 = format_styled(&format!(" 2:server{} ", zoom_text), &active_style);
+    let tab2 = format_styled(&format!(" 2:server{zoom_text} "), &active_style);
     let tab3 = format_styled(" 3:logs ", &inactive_style);
     let sep = format_styled(&theme.window_separator, &inactive_style);
-    let center = format!("{}{}{}{}{}", tab1, sep, tab2, sep, tab3);
+    let center = format!("{tab1}{sep}{tab2}{sep}{tab3}");
 
     // Right status
     let time_part = format_styled("14:32:05", &time_style);
     let host_part = format_styled("on laptop", &host_style);
     let count_part = format_styled("󰖲 3", &count_style);
-    let right = format!("{} {} {}", time_part, host_part, count_part);
+    let right = format!("{time_part} {host_part} {count_part}");
 
-    format!("{} │ {} │ {}", session_text, center, right)
+    format!("{session_text} │ {center} │ {right}")
 }
 
 pub fn display_theme_preview(theme: &Theme) {
@@ -158,10 +158,13 @@ pub fn display_theme_preview(theme: &Theme) {
         ""
     };
 
-    println!("\x1b[1m\x1b[38;2;97;175;239m◆\x1b[0m \x1b[1m{}\x1b[0m  \x1b[2m({})\x1b[0m  {}{}", theme.name, theme.id, variant_pill, custom_pill);
+    println!(
+        "\x1b[1m\x1b[38;2;97;175;239m◆\x1b[0m \x1b[1m{}\x1b[0m  \x1b[2m({})\x1b[0m  {}{}",
+        theme.name, theme.id, variant_pill, custom_pill
+    );
     println!("  \x1b[2mAuthor: {}\x1b[0m", theme.author);
     println!("  \x1b[3m{}\x1b[0m", theme.description);
-    
+
     // Swatches
     if !theme.swatches.is_empty() {
         print!("  Palette: ");
@@ -175,10 +178,15 @@ pub fn display_theme_preview(theme: &Theme) {
     // Mockups
     println!("  \x1b[2m┌─ Status Bar Preview (Normal) ───────────────────────────────────┐\x1b[0m");
     println!("  │ {} │", render_preview_bar(theme, false, false));
-    println!("  \x1b[2m├─ Status Bar Preview (Prefix Key Active & Window Zoomed) ─────────┤\x1b[0m");
+    println!(
+        "  \x1b[2m├─ Status Bar Preview (Prefix Key Active & Window Zoomed) ─────────┤\x1b[0m"
+    );
     println!("  │ {} │", render_preview_bar(theme, true, true));
     println!("  \x1b[2m└─────────────────────────────────────────────────────────────────┘\x1b[0m");
-    println!("  \x1b[2mQuick apply: tmuxship apply --theme {}\x1b[0m\n", theme.id);
+    println!(
+        "  \x1b[2mQuick apply: tmuxship apply --theme {}\x1b[0m\n",
+        theme.id
+    );
 }
 
 pub fn preview_themes(filter: Option<&str>) -> io::Result<()> {
@@ -219,8 +227,7 @@ pub fn preview_themes(filter: Option<&str>) -> io::Result<()> {
     } else {
         writeln!(
             stdout,
-            "\x1b[2mShowing {} theme(s). To use a theme, run: tmuxship apply --theme <theme_id>\x1b[0m",
-            count
+            "\x1b[2mShowing {count} theme(s). To use a theme, run: tmuxship apply --theme <theme_id>\x1b[0m"
         )?;
     }
 

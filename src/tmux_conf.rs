@@ -41,8 +41,13 @@ fn read_starship_config(
     let side_key = side.as_str();
     if let Some(sub_val) = toml_val.get(side_key) {
         if sub_val.is_table() {
-            let parsed: StarshipConfig = sub_val.clone().try_into()
-                .with_context(|| format!("Failed to parse [{}] from {}", side_key, config.config_path.display()))?;
+            let parsed: StarshipConfig = sub_val.clone().try_into().with_context(|| {
+                format!(
+                    "Failed to parse [{}] from {}",
+                    side_key,
+                    config.config_path.display()
+                )
+            })?;
             return Ok(Some(parsed));
         }
     }
@@ -57,9 +62,9 @@ fn tmux_style(starship_style: &str) -> String {
         .split_whitespace()
         .map(|part| {
             if let Some(value) = part.strip_prefix("fg:") {
-                format!("fg={}", value)
+                format!("fg={value}")
             } else if let Some(value) = part.strip_prefix("bg:") {
-                format!("bg={}", value)
+                format!("bg={value}")
             } else {
                 part.to_string()
             }
@@ -119,7 +124,8 @@ pub fn emit_tmux_conf_with_theme(
     let mut options = Vec::new();
 
     // Determine window separator: user env > theme default > standard default
-    let active_theme_name = theme_override.or_else(|| env.get("TMUX_SHIP_THEME").map(|s| s.as_str()));
+    let active_theme_name =
+        theme_override.or_else(|| env.get("TMUX_SHIP_THEME").map(|s| s.as_str()));
     let theme_separator = active_theme_name
         .and_then(|name| find_theme_with_env(name, env))
         .map(|t| t.window_separator)
@@ -137,17 +143,14 @@ pub fn emit_tmux_conf_with_theme(
         ) {
             options.push(TmuxOption {
                 name: "status-left".to_string(),
-                value: format!(
-                    "#{{?client_prefix,{}#S #[default],{}#S #[default]}}",
-                    prefix, normal
-                ),
+                value: format!("#{{?client_prefix,{prefix}#S #[default],{normal}#S #[default]}}"),
             });
         }
     }
 
     if read_starship_config(Side::Right, theme_override, env)?.is_some() {
         let right_cmd = if let Some(theme) = theme_override {
-            format!("#(tmuxship right --theme {})", theme)
+            format!("#(tmuxship right --theme {theme})")
         } else {
             "#(tmuxship right)".to_string()
         };
@@ -161,12 +164,12 @@ pub fn emit_tmux_conf_with_theme(
         if let Some(inactive) = custom_style(&center, "window_inactive") {
             options.push(TmuxOption {
                 name: "window-status-separator".to_string(),
-                value: format!("{}{}#[default]", inactive, window_separator),
+                value: format!("{inactive}{window_separator}#[default]"),
             });
 
             options.push(TmuxOption {
                 name: "window-status-format".to_string(),
-                value: format!("{}###I #W #[default]", inactive),
+                value: format!("{inactive}###I #W #[default]"),
             });
         }
 
@@ -176,13 +179,13 @@ pub fn emit_tmux_conf_with_theme(
                 custom_static_output(&center, "window_zoom"),
             ) {
                 (Some(style), Some(output)) => {
-                    format!(" #{{?window_zoomed_flag,{}{}#[default],}}", style, output)
+                    format!(" #{{?window_zoomed_flag,{style}{output}#[default],}}")
                 }
                 _ => String::new(),
             };
             options.push(TmuxOption {
                 name: "window-status-current-format".to_string(),
-                value: format!("{}###I #W{}#[default]", active, zoom),
+                value: format!("{active}###I #W{zoom}#[default]"),
             });
         }
     }

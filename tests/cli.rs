@@ -2,11 +2,11 @@ use assert_cmd::prelude::*;
 use std::fs;
 use std::io::Write;
 use std::os::unix::fs::PermissionsExt;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 use tempfile::tempdir;
 
-fn make_fake_starship(dir: &PathBuf) -> PathBuf {
+fn make_fake_starship(dir: &Path) -> PathBuf {
     let bin_path = dir.join("starship");
     let mut script = fs::File::create(&bin_path).unwrap();
     writeln!(
@@ -33,7 +33,7 @@ printf '\e[32m%s\e[0m\e[34m%s\e[0m%s\n' "${{STARSHIP_CONFIG}}" "${{TMUX_SESSION_
     bin_path
 }
 
-fn make_fake_tmux(dir: &PathBuf) -> PathBuf {
+fn make_fake_tmux(dir: &Path) -> PathBuf {
     let bin_path = dir.join("tmux");
     let mut script = fs::File::create(&bin_path).unwrap();
     writeln!(
@@ -93,7 +93,7 @@ fi
     bin_path
 }
 
-fn make_fake_tmux_setter(dir: &PathBuf) -> PathBuf {
+fn make_fake_tmux_setter(dir: &Path) -> PathBuf {
     let bin_path = dir.join("tmux");
     let mut script = fs::File::create(&bin_path).unwrap();
     writeln!(
@@ -115,7 +115,7 @@ fi
     bin_path
 }
 
-fn write_generator_configs(root: &PathBuf) {
+fn write_generator_configs(root: &Path) {
     fs::create_dir_all(root).unwrap();
     fs::write(
         root.join("starship.toml"),
@@ -502,7 +502,13 @@ fn cli_theme_export_and_install() {
 
     Command::cargo_bin("tmuxship")
         .unwrap()
-        .args(["theme", "export", "nord", "--dir", export_dir.to_string_lossy().as_ref()])
+        .args([
+            "theme",
+            "export",
+            "nord",
+            "--dir",
+            export_dir.to_string_lossy().as_ref(),
+        ])
         .assert()
         .success();
 
@@ -513,7 +519,13 @@ fn cli_theme_export_and_install() {
     let install_dir = dir.path().join("installed");
     Command::cargo_bin("tmuxship")
         .unwrap()
-        .args(["theme", "install", "nord", "--dir", install_dir.to_string_lossy().as_ref()])
+        .args([
+            "theme",
+            "install",
+            "nord",
+            "--dir",
+            install_dir.to_string_lossy().as_ref(),
+        ])
         .assert()
         .success();
 
@@ -595,4 +607,3 @@ fn cli_apply_with_theme_flag() {
     assert!(log.contains("status-right"));
     assert!(log.contains("window-status-current-format"));
 }
-

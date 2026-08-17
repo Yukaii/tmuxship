@@ -70,7 +70,7 @@ pub struct Theme {
 
 pub fn parse_theme(id: &str, raw_toml: &str, is_custom: bool) -> Result<Theme> {
     let toml_val: toml::Value = toml::from_str(raw_toml)
-        .with_context(|| format!("Failed to parse theme TOML for '{}'", id))?;
+        .with_context(|| format!("Failed to parse theme TOML for '{id}'"))?;
 
     let meta: ThemeMeta = match toml::from_str(raw_toml) {
         Ok(m) => m,
@@ -104,7 +104,7 @@ pub fn parse_theme(id: &str, raw_toml: &str, is_custom: bool) -> Result<Theme> {
     let right = extract_sub("right");
     let mut full = extract_sub("full");
     if full.is_empty() && !left.is_empty() {
-        full = format!("{}\n{}", left, right);
+        full = format!("{left}\n{right}");
     }
 
     Ok(Theme {
@@ -127,22 +127,55 @@ pub fn parse_theme(id: &str, raw_toml: &str, is_custom: bool) -> Result<Theme> {
 pub fn builtin_themes() -> Vec<Theme> {
     let raw_themes: &[(&str, &str)] = &[
         ("rose-pine", include_str!("../../themes/rose-pine.toml")),
-        ("rose-pine-moon", include_str!("../../themes/rose-pine-moon.toml")),
-        ("rose-pine-dawn", include_str!("../../themes/rose-pine-dawn.toml")),
-        ("catppuccin-mocha", include_str!("../../themes/catppuccin-mocha.toml")),
-        ("catppuccin-macchiato", include_str!("../../themes/catppuccin-macchiato.toml")),
-        ("catppuccin-frappe", include_str!("../../themes/catppuccin-frappe.toml")),
-        ("catppuccin-latte", include_str!("../../themes/catppuccin-latte.toml")),
+        (
+            "rose-pine-moon",
+            include_str!("../../themes/rose-pine-moon.toml"),
+        ),
+        (
+            "rose-pine-dawn",
+            include_str!("../../themes/rose-pine-dawn.toml"),
+        ),
+        (
+            "catppuccin-mocha",
+            include_str!("../../themes/catppuccin-mocha.toml"),
+        ),
+        (
+            "catppuccin-macchiato",
+            include_str!("../../themes/catppuccin-macchiato.toml"),
+        ),
+        (
+            "catppuccin-frappe",
+            include_str!("../../themes/catppuccin-frappe.toml"),
+        ),
+        (
+            "catppuccin-latte",
+            include_str!("../../themes/catppuccin-latte.toml"),
+        ),
         ("tokyo-night", include_str!("../../themes/tokyo-night.toml")),
-        ("tokyo-night-moon", include_str!("../../themes/tokyo-night-moon.toml")),
+        (
+            "tokyo-night-moon",
+            include_str!("../../themes/tokyo-night-moon.toml"),
+        ),
         ("nord", include_str!("../../themes/nord.toml")),
-        ("gruvbox-dark", include_str!("../../themes/gruvbox-dark.toml")),
-        ("gruvbox-light", include_str!("../../themes/gruvbox-light.toml")),
+        (
+            "gruvbox-dark",
+            include_str!("../../themes/gruvbox-dark.toml"),
+        ),
+        (
+            "gruvbox-light",
+            include_str!("../../themes/gruvbox-light.toml"),
+        ),
         ("dracula", include_str!("../../themes/dracula.toml")),
         ("kanagawa", include_str!("../../themes/kanagawa.toml")),
         ("onedark", include_str!("../../themes/onedark.toml")),
-        ("solarized-dark", include_str!("../../themes/solarized-dark.toml")),
-        ("solarized-light", include_str!("../../themes/solarized-light.toml")),
+        (
+            "solarized-dark",
+            include_str!("../../themes/solarized-dark.toml"),
+        ),
+        (
+            "solarized-light",
+            include_str!("../../themes/solarized-light.toml"),
+        ),
     ];
 
     raw_themes
@@ -204,7 +237,7 @@ pub fn find_theme_with_env(name_or_id: &str, env: &HashMap<String, String>) -> O
     for base in custom_theme_dirs(env) {
         if base.is_dir() {
             // Check <query>.toml
-            let single_file = base.join(format!("{}.toml", query));
+            let single_file = base.join(format!("{query}.toml"));
             if let Some(theme) = load_custom_theme_from_path(&single_file) {
                 return Some(theme);
             }
@@ -219,7 +252,9 @@ pub fn find_theme_with_env(name_or_id: &str, env: &HashMap<String, String>) -> O
     // 2. Fall back to built-in themes
     let builtins = builtin_themes();
     builtins.into_iter().find(|t| {
-        t.id == query || t.id.replace('-', "") == query.replace('-', "") || t.name.to_lowercase() == query
+        t.id == query
+            || t.id.replace('-', "") == query.replace('-', "")
+            || t.name.to_lowercase() == query
     })
 }
 

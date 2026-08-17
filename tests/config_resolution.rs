@@ -194,6 +194,6 @@ fn error_when_missing() {
     let dir = tempfile::tempdir().unwrap();
     let env = env_with_home(dir.path());
     let err = resolve_config(Side::Full, None, &env).unwrap_err();
-    let msg = format!("{}", err);
+    let msg = format!("{err}");
     assert!(msg.contains("Unable to locate"));
 }

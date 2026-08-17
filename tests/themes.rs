@@ -39,7 +39,10 @@ fn test_all_themes_catalog() {
 fn test_ensure_theme_file_creates_cached_files() {
     let dir = tempdir().unwrap();
     let mut env = HashMap::new();
-    env.insert("XDG_CACHE_HOME".to_string(), dir.path().to_string_lossy().to_string());
+    env.insert(
+        "XDG_CACHE_HOME".to_string(),
+        dir.path().to_string_lossy().to_string(),
+    );
 
     let theme = find_theme("rose-pine").unwrap();
     let left_path = ensure_theme_file(&theme, Side::Left, &env).unwrap();
@@ -58,7 +61,10 @@ fn test_ensure_theme_file_creates_cached_files() {
 fn test_resolve_config_with_theme_override() {
     let dir = tempdir().unwrap();
     let mut env = HashMap::new();
-    env.insert("XDG_CACHE_HOME".to_string(), dir.path().to_string_lossy().to_string());
+    env.insert(
+        "XDG_CACHE_HOME".to_string(),
+        dir.path().to_string_lossy().to_string(),
+    );
 
     let resolved = resolve_config_with_theme(Side::Left, None, Some("rose-pine"), &env).unwrap();
     assert_eq!(resolved.source, "theme:rose-pine");
@@ -69,8 +75,14 @@ fn test_resolve_config_with_theme_override() {
 fn test_resolve_config_with_theme_env() {
     let dir = tempdir().unwrap();
     let mut env = HashMap::new();
-    env.insert("XDG_CACHE_HOME".to_string(), dir.path().to_string_lossy().to_string());
-    env.insert("TMUX_SHIP_THEME".to_string(), "catppuccin-mocha".to_string());
+    env.insert(
+        "XDG_CACHE_HOME".to_string(),
+        dir.path().to_string_lossy().to_string(),
+    );
+    env.insert(
+        "TMUX_SHIP_THEME".to_string(),
+        "catppuccin-mocha".to_string(),
+    );
 
     let resolved = resolve_config_with_theme(Side::Center, None, None, &env).unwrap();
     assert_eq!(resolved.source, "theme:catppuccin-mocha");
@@ -125,7 +137,11 @@ variant = "dark"
     )
     .unwrap();
     fs::write(custom_theme_dir.join("starship.toml"), "# synthwave left\n").unwrap();
-    fs::write(custom_theme_dir.join(".center.toml"), "# synthwave center\n").unwrap();
+    fs::write(
+        custom_theme_dir.join(".center.toml"),
+        "# synthwave center\n",
+    )
+    .unwrap();
     fs::write(custom_theme_dir.join(".right.toml"), "# synthwave right\n").unwrap();
 
     let mut env = HashMap::new();
@@ -149,7 +165,10 @@ variant = "dark"
 fn test_emit_tmux_conf_with_theme() {
     let dir = tempdir().unwrap();
     let mut env = HashMap::new();
-    env.insert("XDG_CACHE_HOME".to_string(), dir.path().to_string_lossy().to_string());
+    env.insert(
+        "XDG_CACHE_HOME".to_string(),
+        dir.path().to_string_lossy().to_string(),
+    );
 
     let options = emit_tmux_conf_with_theme(Some("rose-pine"), &env).unwrap();
     let conf_map: HashMap<_, _> = options.into_iter().map(|o| (o.name, o.value)).collect();
@@ -157,7 +176,12 @@ fn test_emit_tmux_conf_with_theme() {
     assert!(conf_map.contains_key("status-left"));
     assert!(conf_map["status-left"].contains("#[bg=#eb6f92,fg=#191724,bold]#S"));
     assert!(conf_map.contains_key("status-right"));
-    assert_eq!(conf_map["status-right"], "#(tmuxship right --theme rose-pine)");
+    assert_eq!(
+        conf_map["status-right"],
+        "#(tmuxship right --theme rose-pine)"
+    );
     assert!(conf_map.contains_key("window-status-current-format"));
-    assert!(conf_map["window-status-current-format"].contains("#[bg=#26233a,fg=#ebbcba,bold]###I #W"));
+    assert!(
+        conf_map["window-status-current-format"].contains("#[bg=#26233a,fg=#ebbcba,bold]###I #W")
+    );
 }

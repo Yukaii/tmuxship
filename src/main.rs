@@ -174,8 +174,12 @@ fn main() -> Result<()> {
             tmux_conf::apply_tmux_conf(&options)
         }
         CliCommand::Init(args) => {
-            let theme = find_theme_with_env(&args.theme, &env)
-                .ok_or_else(|| anyhow!("Theme '{}' not found. Run `tmuxship theme list` to see available themes.", args.theme))?;
+            let theme = find_theme_with_env(&args.theme, &env).ok_or_else(|| {
+                anyhow!(
+                    "Theme '{}' not found. Run `tmuxship theme list` to see available themes.",
+                    args.theme
+                )
+            })?;
             print!("{}", theme::generate_init_snippet(&theme));
             Ok(())
         }
@@ -193,7 +197,7 @@ fn render_side(side: Side, args: RenderArgs, env: &HashMap<String, String>) -> R
 
     let ansi = render::run_starship(&config, env)?;
     let rendered = render::render_from_ansi(&ansi);
-    print!("{}", rendered);
+    print!("{rendered}");
     Ok(())
 }
 
@@ -219,11 +223,14 @@ fn handle_theme_command(cmd: ThemeCommand, env: &HashMap<String, String>) -> Res
 
             if json {
                 let serialized = serde_json::to_string_pretty(&filtered)?;
-                println!("{}", serialized);
+                println!("{serialized}");
                 return Ok(());
             }
 
-            println!("\x1b[1m\x1b[38;2;137;180;250mAvailable tmuxship Themes ({})\x1b[0m\n", filtered.len());
+            println!(
+                "\x1b[1m\x1b[38;2;137;180;250mAvailable tmuxship Themes ({})\x1b[0m\n",
+                filtered.len()
+            );
             println!(
                 "  {:<22} {:<24} {:<8} {:<18}",
                 "ID", "NAME", "VARIANT", "AUTHOR"
@@ -242,20 +249,15 @@ fn handle_theme_command(cmd: ThemeCommand, env: &HashMap<String, String>) -> Res
                 );
             }
 
-            println!(
-                "\n\x1b[2mUse `tmuxship theme preview [ID]` to view rich previews.\x1b[0m"
-            );
-            println!(
-                "\x1b[2mUse `tmuxship apply --theme [ID]` to apply immediately.\x1b[0m"
-            );
+            println!("\n\x1b[2mUse `tmuxship theme preview [ID]` to view rich previews.\x1b[0m");
+            println!("\x1b[2mUse `tmuxship apply --theme [ID]` to apply immediately.\x1b[0m");
             Ok(())
         }
         ThemeCommand::Preview { theme, filter } => {
             if let Some(ref name) = theme {
                 let t = find_theme_with_env(name, env).ok_or_else(|| {
                     anyhow!(
-                        "Theme '{}' not found. Run `tmuxship theme list` to see available themes.",
-                        name
+                        "Theme '{name}' not found. Run `tmuxship theme list` to see available themes."
                     )
                 })?;
                 theme::preview::display_theme_preview(&t);
@@ -268,8 +270,7 @@ fn handle_theme_command(cmd: ThemeCommand, env: &HashMap<String, String>) -> Res
         ThemeCommand::Show { theme, side } => {
             let t = find_theme_with_env(&theme, env).ok_or_else(|| {
                 anyhow!(
-                    "Theme '{}' not found. Run `tmuxship theme list` to see available themes.",
-                    theme
+                    "Theme '{theme}' not found. Run `tmuxship theme list` to see available themes."
                 )
             })?;
 
@@ -288,8 +289,7 @@ fn handle_theme_command(cmd: ThemeCommand, env: &HashMap<String, String>) -> Res
         ThemeCommand::Export { theme, dir } => {
             let t = find_theme_with_env(&theme, env).ok_or_else(|| {
                 anyhow!(
-                    "Theme '{}' not found. Run `tmuxship theme list` to see available themes.",
-                    theme
+                    "Theme '{theme}' not found. Run `tmuxship theme list` to see available themes."
                 )
             })?;
             theme::export_theme(&t, &dir)?;
@@ -303,8 +303,7 @@ fn handle_theme_command(cmd: ThemeCommand, env: &HashMap<String, String>) -> Res
         ThemeCommand::Install { theme, dir, force } => {
             let t = find_theme_with_env(&theme, env).ok_or_else(|| {
                 anyhow!(
-                    "Theme '{}' not found. Run `tmuxship theme list` to see available themes.",
-                    theme
+                    "Theme '{theme}' not found. Run `tmuxship theme list` to see available themes."
                 )
             })?;
             let dest = theme::install_theme(&t, dir.as_deref(), force)?;
@@ -314,15 +313,17 @@ fn handle_theme_command(cmd: ThemeCommand, env: &HashMap<String, String>) -> Res
                 dest.display()
             );
             println!("\nAdd to your ~/.tmux.conf (Unified single-file config):");
-            println!("  setenv -g TMUX_SHIP_CONFIG \"{}/tmuxship.toml\"", dest.display());
+            println!(
+                "  setenv -g TMUX_SHIP_CONFIG \"{}/tmuxship.toml\"",
+                dest.display()
+            );
             println!("  run-shell 'tmuxship apply'\n");
             Ok(())
         }
         ThemeCommand::Init { theme } => {
             let t = find_theme_with_env(&theme, env).ok_or_else(|| {
                 anyhow!(
-                    "Theme '{}' not found. Run `tmuxship theme list` to see available themes.",
-                    theme
+                    "Theme '{theme}' not found. Run `tmuxship theme list` to see available themes."
                 )
             })?;
             print!("{}", theme::generate_init_snippet(&t));
