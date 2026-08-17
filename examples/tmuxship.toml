@@ -1,0 +1,74 @@
+# Example: Unified single-file configuration for tmuxship
+# Place this at ~/.tmux/tmuxship.toml or use TMUX_SHIP_CONFIG
+
+name = "tmuxship-default"
+window_separator = " • "
+
+# --- Left Status Segment ---
+[left]
+"$schema" = 'https://starship.rs/config-schema.json'
+format = "$custom"
+add_newline = false
+
+[left.custom.prefix_active]
+shell = "bash"
+when = 'test "${TMUX_CLIENT_PREFIX:-0}" = "1"'
+command = 'printf "%s " "${TMUX_SESSION_NAME:-?}"'
+format = "[$output]($style) "
+style = "bg:#95E6CB bold"
+
+[left.custom.session_normal]
+shell = "bash"
+when = 'test "${TMUX_CLIENT_PREFIX:-0}" != "1"'
+command = 'printf "%s " "${TMUX_SESSION_NAME:-?}"'
+format = "[$output]($style) "
+style = "fg:#565B66"
+
+# --- Center Status Segment (Window Tabs) ---
+[center]
+format = "$custom"
+add_newline = false
+
+[center.custom.window_active]
+when = 'test "${TMUX_WINDOW_ACTIVE:-0}" = "1"'
+command = 'printf "%s:%s" "${TMUX_WINDOW_INDEX}" "${TMUX_WINDOW_NAME}"'
+format = "[$output]($style)"
+style = "bg:#313244 fg:#CDD6F4 bold"
+
+[center.custom.window_inactive]
+when = 'test "${TMUX_WINDOW_ACTIVE:-0}" != "1"'
+command = 'printf "%s:%s" "${TMUX_WINDOW_INDEX}" "${TMUX_WINDOW_NAME}"'
+format = "[$output]($style)"
+style = "fg:#6C7086"
+
+[center.custom.window_zoom]
+when = 'test "${TMUX_WINDOW_ACTIVE:-0}" = "1" && test "${TMUX_WINDOW_ZOOMED_FLAG:-0}" = "1"'
+command = 'printf "🔍"'
+format = " $output"
+style = "fg:#F9E2AF"
+
+# --- Right Status Segment ---
+[right]
+"$schema" = 'https://starship.rs/config-schema.json'
+format = "$time$custom"
+add_newline = false
+
+[right.time]
+disabled = false
+format = "[$time]($style) "
+style = "fg:#89B4FA"
+time_format = "%H:%M:%S"
+
+[right.custom.host]
+when = "true"
+shell = "bash"
+command = 'printf "%s" "${TMUX_HOST_SHORT:-$(hostname -s)}"'
+format = "on [$output]($style) "
+style = "fg:#A6E3A1"
+
+[right.custom.window_count]
+when = "true"
+shell = "bash"
+command = 'printf "%s" "${TMUX_SESSION_WINDOWS}"'
+format = "[󰖲 $output]($style)"
+style = "fg:#CBA6F7"
