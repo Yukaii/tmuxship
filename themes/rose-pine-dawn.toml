@@ -1,0 +1,85 @@
+name = "Rosé Pine Dawn"
+description = "Delicate sunrise hues on a warm paper background"
+author = "Rose Pine"
+variant = "light"
+window_separator = " • "
+
+[[swatches]]
+name = "Love"
+hex = "#b4637a"
+
+[[swatches]]
+name = "Gold"
+hex = "#ea9d34"
+
+[[swatches]]
+name = "Rose"
+hex = "#d7827e"
+
+[[swatches]]
+name = "Pine"
+hex = "#286983"
+
+[[swatches]]
+name = "Foam"
+hex = "#56949f"
+
+[[swatches]]
+name = "Iris"
+hex = "#907aa9"
+
+[left]
+"$schema" = 'https://starship.rs/config-schema.json'
+format = "$custom"
+add_newline = false
+[left.custom.prefix_active]
+when = 'test "${TMUX_CLIENT_PREFIX:-0}" = "1"'
+command = 'printf "󰇄 %s" "${TMUX_SESSION_NAME:-tmux}"'
+format = "[$output]($style) "
+style = "bg:#b4637a fg:#faf4ed bold"
+[left.custom.session_normal]
+when = 'test "${TMUX_CLIENT_PREFIX:-0}" != "1"'
+command = 'printf "󰇄 %s" "${TMUX_SESSION_NAME:-tmux}"'
+format = "[$output]($style) "
+style = "fg:#797593"
+
+[center]
+format = "$custom"
+add_newline = false
+[center.custom.window_active]
+when = 'test "${TMUX_WINDOW_ACTIVE:-0}" = "1"'
+command = 'printf "%s:%s" "${TMUX_WINDOW_INDEX:-1}" "${TMUX_WINDOW_NAME:-sh}"'
+format = "[$output]($style)"
+style = "bg:#f2e9e1 fg:#d7827e bold"
+[center.custom.window_inactive]
+when = 'test "${TMUX_WINDOW_ACTIVE:-0}" != "1"'
+command = 'printf "%s:%s" "${TMUX_WINDOW_INDEX:-1}" "${TMUX_WINDOW_NAME:-sh}"'
+format = "[$output]($style)"
+style = "fg:#9893a5"
+[center.custom.window_zoom]
+when = 'test "${TMUX_WINDOW_ACTIVE:-0}" = "1" && test "${TMUX_WINDOW_ZOOMED_FLAG:-0}" = "1"'
+command = 'printf "🔍"'
+format = " $output"
+style = "fg:#ea9d34"
+
+[right]
+"$schema" = 'https://starship.rs/config-schema.json'
+format = "$time$custom"
+add_newline = false
+[right.time]
+disabled = false
+format = "[$time]($style) "
+style = "fg:#56949f"
+time_format = "%H:%M:%S"
+[right.custom.host]
+when = "true"
+shell = "bash"
+command = 'printf "%s" "${TMUX_HOST_SHORT:-$(hostname -s)}"'
+format = "on [$output]($style) "
+style = "fg:#286983"
+[right.custom.window_count]
+when = "true"
+shell = "bash"
+command = 'printf "%s" "${TMUX_SESSION_WINDOWS:-1}"'
+format = "[󰖲 $output]($style)"
+style = "fg:#907aa9"

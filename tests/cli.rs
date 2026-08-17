@@ -2,11 +2,11 @@ use assert_cmd::prelude::*;
 use std::fs;
 use std::io::Write;
 use std::os::unix::fs::PermissionsExt;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 use tempfile::tempdir;
 
-fn make_fake_starship(dir: &PathBuf) -> PathBuf {
+fn make_fake_starship(dir: &Path) -> PathBuf {
     let bin_path = dir.join("starship");
     let mut script = fs::File::create(&bin_path).unwrap();
     writeln!(
@@ -33,7 +33,7 @@ printf '\e[32m%s\e[0m\e[34m%s\e[0m%s\n' "${{STARSHIP_CONFIG}}" "${{TMUX_SESSION_
     bin_path
 }
 
-fn make_fake_tmux(dir: &PathBuf) -> PathBuf {
+fn make_fake_tmux(dir: &Path) -> PathBuf {
     let bin_path = dir.join("tmux");
     let mut script = fs::File::create(&bin_path).unwrap();
     writeln!(
@@ -93,7 +93,7 @@ fi
     bin_path
 }
 
-fn make_fake_tmux_setter(dir: &PathBuf) -> PathBuf {
+fn make_fake_tmux_setter(dir: &Path) -> PathBuf {
     let bin_path = dir.join("tmux");
     let mut script = fs::File::create(&bin_path).unwrap();
     writeln!(
@@ -115,7 +115,7 @@ fi
     bin_path
 }
 
-fn write_generator_configs(root: &PathBuf) {
+fn write_generator_configs(root: &Path) {
     fs::create_dir_all(root).unwrap();
     fs::write(
         root.join("starship.toml"),
@@ -423,6 +423,187 @@ fn cli_apply_sets_generated_tmux_options() {
     assert!(log.contains("status-left"));
     assert!(log
         .contains("#{?client_prefix,#[bg=#95E6CB,bold]#S #[default],#[fg=#565B66]#S #[default]}"));
+    assert!(log.contains("status-right"));
+    assert!(log.contains("window-status-current-format"));
+}
+
+#[test]
+fn cli_theme_list() {
+    let output = Command::cargo_bin("tmuxship")
+        .unwrap()
+        .args(["theme", "list"])
+        .assert()
+        .success()
+        .get_output()
+        .stdout
+        .clone();
+
+    let stdout = String::from_utf8(output).unwrap();
+    assert!(stdout.contains("rose-pine"));
+    assert!(stdout.contains("catppuccin-mocha"));
+    assert!(stdout.contains("tokyo-night"));
+    assert!(stdout.contains("nord"));
+}
+
+#[test]
+fn cli_theme_list_json() {
+    let output = Command::cargo_bin("tmuxship")
+        .unwrap()
+        .args(["theme", "list", "--json"])
+        .assert()
+        .success()
+        .get_output()
+        .stdout
+        .clone();
+
+    let stdout = String::from_utf8(output).unwrap();
+    let parsed: serde_json::Value = serde_json::from_str(&stdout).unwrap();
+    assert!(parsed.is_array());
+    assert!(parsed.as_array().unwrap().len() >= 17);
+}
+
+#[test]
+fn cli_theme_preview() {
+    let output = Command::cargo_bin("tmuxship")
+        .unwrap()
+        .args(["theme", "preview", "rose-pine"])
+        .assert()
+        .success()
+        .get_output()
+        .stdout
+        .clone();
+
+    let stdout = String::from_utf8(output).unwrap();
+    assert!(stdout.contains("Rosé Pine"));
+    assert!(stdout.contains("rose-pine"));
+    assert!(stdout.contains("Preview"));
+}
+
+#[test]
+fn cli_theme_show() {
+    let output = Command::cargo_bin("tmuxship")
+        .unwrap()
+        .args(["theme", "show", "rose-pine", "--side", "left"])
+        .assert()
+        .success()
+        .get_output()
+        .stdout
+        .clone();
+
+    let stdout = String::from_utf8(output).unwrap();
+    assert!(stdout.contains("[custom.prefix_active]"));
+    assert!(stdout.contains("bg:#eb6f92"));
+}
+
+#[test]
+fn cli_theme_export_and_install() {
+    let dir = tempdir().unwrap();
+    let export_dir = dir.path().join("exported");
+
+    Command::cargo_bin("tmuxship")
+        .unwrap()
+        .args([
+            "theme",
+            "export",
+            "nord",
+            "--dir",
+            export_dir.to_string_lossy().as_ref(),
+        ])
+        .assert()
+        .success();
+
+    assert!(export_dir.join("starship.toml").is_file());
+    assert!(export_dir.join(".center.toml").is_file());
+    assert!(export_dir.join(".right.toml").is_file());
+
+    let install_dir = dir.path().join("installed");
+    Command::cargo_bin("tmuxship")
+        .unwrap()
+        .args([
+            "theme",
+            "install",
+            "nord",
+            "--dir",
+            install_dir.to_string_lossy().as_ref(),
+        ])
+        .assert()
+        .success();
+
+    assert!(install_dir.join("starship.toml").is_file());
+}
+
+#[test]
+fn cli_theme_init() {
+    let output = Command::cargo_bin("tmuxship")
+        .unwrap()
+        .args(["theme", "init", "catppuccin-mocha"])
+        .assert()
+        .success()
+        .get_output()
+        .stdout
+        .clone();
+
+    let stdout = String::from_utf8(output).unwrap();
+    assert!(stdout.contains("setenv -g TMUX_SHIP_THEME \"catppuccin-mocha\""));
+    assert!(stdout.contains("run-shell 'tmuxship apply'"));
+}
+
+#[test]
+fn cli_emit_tmux_conf_with_theme_flag() {
+    let dir = tempdir().unwrap();
+
+    let output = Command::cargo_bin("tmuxship")
+        .unwrap()
+        .args(["emit-tmux-conf", "--theme", "rose-pine"])
+        .env("XDG_CACHE_HOME", dir.path())
+        .env_remove("TMUX_SHIP_LEFT_CONFIG")
+        .env_remove("TMUX_SHIP_RIGHT_CONFIG")
+        .env_remove("TMUX_SHIP_CENTER_CONFIG")
+        .env_remove("STARSHIP_CONFIG")
+        .assert()
+        .success()
+        .get_output()
+        .stdout
+        .clone();
+
+    let stdout = String::from_utf8(output).unwrap();
+    assert!(stdout.contains("status-left"));
+    assert!(stdout.contains("#[bg=#eb6f92,fg=#191724,bold]#S"));
+    assert!(stdout.contains("status-right"));
+    assert!(stdout.contains("#(tmuxship right --theme rose-pine)"));
+}
+
+#[test]
+fn cli_apply_with_theme_flag() {
+    let dir = tempdir().unwrap();
+    let fake_bin_dir = dir.path().join("bin");
+    fs::create_dir_all(&fake_bin_dir).unwrap();
+    make_fake_tmux_setter(&fake_bin_dir);
+    let log_path = dir.path().join("apply_theme.log");
+
+    Command::cargo_bin("tmuxship")
+        .unwrap()
+        .args(["apply", "--theme", "catppuccin-mocha"])
+        .env("XDG_CACHE_HOME", dir.path())
+        .env("TMUX_SHIP_APPLY_LOG", &log_path)
+        .env(
+            "PATH",
+            format!(
+                "{}:{}",
+                fake_bin_dir.display(),
+                std::env::var("PATH").unwrap()
+            ),
+        )
+        .env_remove("TMUX_SHIP_LEFT_CONFIG")
+        .env_remove("TMUX_SHIP_RIGHT_CONFIG")
+        .env_remove("TMUX_SHIP_CENTER_CONFIG")
+        .env_remove("STARSHIP_CONFIG")
+        .assert()
+        .success();
+
+    let log = fs::read_to_string(log_path).unwrap();
+    assert!(log.contains("status-left"));
+    assert!(log.contains("#[bg=#95E6CB,fg=#11111b,bold]#S"));
     assert!(log.contains("status-right"));
     assert!(log.contains("window-status-current-format"));
 }

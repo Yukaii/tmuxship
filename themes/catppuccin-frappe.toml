@@ -1,0 +1,81 @@
+name = "Catppuccin Frappé"
+description = "Soft muted dark theme balancing warmth and cool undertones"
+author = "Catppuccin Org"
+variant = "dark"
+window_separator = " • "
+
+[[swatches]]
+name = "Teal"
+hex = "#81c8be"
+
+[[swatches]]
+name = "Blue"
+hex = "#8caaee"
+
+[[swatches]]
+name = "Green"
+hex = "#a6d189"
+
+[[swatches]]
+name = "Peach"
+hex = "#ef9f76"
+
+[[swatches]]
+name = "Mauve"
+hex = "#ca9ee6"
+
+[left]
+"$schema" = 'https://starship.rs/config-schema.json'
+format = "$custom"
+add_newline = false
+[left.custom.prefix_active]
+when = 'test "${TMUX_CLIENT_PREFIX:-0}" = "1"'
+command = 'printf "󰇄 %s" "${TMUX_SESSION_NAME:-tmux}"'
+format = "[$output]($style) "
+style = "bg:#81c8be fg:#232634 bold"
+[left.custom.session_normal]
+when = 'test "${TMUX_CLIENT_PREFIX:-0}" != "1"'
+command = 'printf "󰇄 %s" "${TMUX_SESSION_NAME:-tmux}"'
+format = "[$output]($style) "
+style = "fg:#737994"
+
+[center]
+format = "$custom"
+add_newline = false
+[center.custom.window_active]
+when = 'test "${TMUX_WINDOW_ACTIVE:-0}" = "1"'
+command = 'printf "%s:%s" "${TMUX_WINDOW_INDEX:-1}" "${TMUX_WINDOW_NAME:-sh}"'
+format = "[$output]($style)"
+style = "bg:#414559 fg:#c6d0f5 bold"
+[center.custom.window_inactive]
+when = 'test "${TMUX_WINDOW_ACTIVE:-0}" != "1"'
+command = 'printf "%s:%s" "${TMUX_WINDOW_INDEX:-1}" "${TMUX_WINDOW_NAME:-sh}"'
+format = "[$output]($style)"
+style = "fg:#737994"
+[center.custom.window_zoom]
+when = 'test "${TMUX_WINDOW_ACTIVE:-0}" = "1" && test "${TMUX_WINDOW_ZOOMED_FLAG:-0}" = "1"'
+command = 'printf "🔍"'
+format = " $output"
+style = "fg:#e5c890"
+
+[right]
+"$schema" = 'https://starship.rs/config-schema.json'
+format = "$time$custom"
+add_newline = false
+[right.time]
+disabled = false
+format = "[$time]($style) "
+style = "fg:#8caaee"
+time_format = "%H:%M:%S"
+[right.custom.host]
+when = "true"
+shell = "bash"
+command = 'printf "%s" "${TMUX_HOST_SHORT:-$(hostname -s)}"'
+format = "on [$output]($style) "
+style = "fg:#a6d189"
+[right.custom.window_count]
+when = "true"
+shell = "bash"
+command = 'printf "%s" "${TMUX_SESSION_WINDOWS:-1}"'
+format = "[󰖲 $output]($style)"
+style = "fg:#ca9ee6"
