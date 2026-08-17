@@ -7,6 +7,8 @@ on:
       - "docs/**"
       - "themes/**"
       - "src/**"
+      - "package.json"
+      - "package-lock.json"
       - ".github/workflows/docs.yml"
   pull_request:
     branches: [main]
@@ -14,6 +16,8 @@ on:
       - "docs/**"
       - "themes/**"
       - "src/**"
+      - "package.json"
+      - "package-lock.json"
       - ".github/workflows/docs.yml"
   workflow_dispatch:
 
@@ -36,14 +40,27 @@ jobs:
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
       - name: Generate latest themes.json dataset
         run: |
-          cargo run -- theme list --json > docs/themes.json
+          cargo run -- theme list --json > docs/public/themes.json
+          cp docs/public/themes.json docs/themes.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build VitePress documentation site
+        run: npm run docs:build
 
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/
+          path: docs/.vitepress/dist/
 
   deploy:
     if: github.ref == 'refs/heads/main'
