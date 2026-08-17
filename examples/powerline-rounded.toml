@@ -1,0 +1,77 @@
+# Powerline Rounded Pills / Bubbles Example (Catppuccin Mocha style)
+# Similar to catppuccin/tmux and rose-pine/tmux rounded capsule segments
+# Usage:
+#   cp examples/powerline-rounded.toml ~/.tmux/tmuxship.toml
+#   In ~/.tmux.conf: run-shell 'tmuxship apply'
+
+name = "Powerline Rounded Pills"
+window_separator = " "
+
+# --- Left Status: Rounded Session & Path Pills ---
+[left]
+"$schema" = 'https://starship.rs/config-schema.json'
+format = "$custom"
+add_newline = false
+
+[left.custom.prefix_active]
+shell = "bash"
+when = 'test "${TMUX_CLIENT_PREFIX:-0}" = "1"'
+command = 'printf "#[bg=#f38ba8,fg=#11111b,bold] 󰇄 %s #[bg=default,fg=#f38ba8]" "${TMUX_SESSION_NAME:-tmux}"'
+format = "$output "
+
+[left.custom.session_normal]
+shell = "bash"
+when = 'test "${TMUX_CLIENT_PREFIX:-0}" != "1"'
+command = 'printf "#[bg=#89b4fa,fg=#11111b,bold] 󰇄 %s #[bg=default,fg=#89b4fa]" "${TMUX_SESSION_NAME:-tmux}"'
+format = "$output "
+
+[left.custom.directory]
+shell = "bash"
+when = 'test -n "${TMUX_PANE_CURRENT_PATH}"'
+command = 'p="${TMUX_PANE_CURRENT_PATH}"; p="${p/#$HOME/~}"; printf "#[bg=#313244,fg=#a6adc8] 󰉋 %s #[bg=default,fg=#313244]" "$p"'
+format = "$output "
+
+# --- Center Status: Rounded Window Pills ---
+[center]
+format = "$custom"
+add_newline = false
+
+[center.custom.window_active]
+when = 'test "${TMUX_WINDOW_ACTIVE:-0}" = "1"'
+command = 'printf "#[bg=#cba6f7,fg=#11111b,bold] #I #[bg=#313244,fg=#cdd6f4,bold] #W #[bg=default,fg=#313244]"'
+format = "$output"
+
+[center.custom.window_inactive]
+when = 'test "${TMUX_WINDOW_ACTIVE:-0}" != "1"'
+command = 'printf "#[bg=#45475a,fg=#bac2de] #I #[bg=#181825,fg=#6c7086] #W #[bg=default,fg=#181825]"'
+format = "$output"
+
+[center.custom.window_zoom]
+when = 'test "${TMUX_WINDOW_ACTIVE:-0}" = "1" && test "${TMUX_WINDOW_ZOOMED_FLAG:-0}" = "1"'
+command = 'printf " 🔍"'
+format = "$output"
+style = "fg:#f9e2af"
+
+# --- Right Status: Powerline Pill Widgets ---
+[right]
+"$schema" = 'https://starship.rs/config-schema.json'
+format = "$custom"
+add_newline = false
+
+[right.custom.host]
+when = "true"
+shell = "bash"
+command = 'printf "#[bg=#45475a,fg=#b4befe] 󰒋 %s #[bg=default,fg=#45475a]" "${TMUX_HOST_SHORT:-$(hostname -s)}"'
+format = "$output "
+
+[right.custom.battery]
+when = "which pmset >/dev/null 2>&1 || test -d /sys/class/power_supply/BAT0"
+shell = "bash"
+command = 'pct=$(pmset -g batt 2>/dev/null | grep -o "[0-9]\\+%" | head -1 || cat /sys/class/power_supply/BAT0/capacity 2>/dev/null); test -n "$pct" && printf "#[bg=#a6e3a1,fg=#11111b,bold] 󰁹 %s #[bg=default,fg=#a6e3a1]" "$pct"'
+format = "$output "
+
+[right.custom.datetime]
+when = "true"
+shell = "bash"
+command = 'printf "#[bg=#fab387,fg=#11111b,bold] 󱑂 %s #[bg=default,fg=#fab387]" "$(date +%H:%M)"'
+format = "$output"

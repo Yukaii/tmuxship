@@ -1,5 +1,5 @@
-# Theme Marketplace & Previewer
+# Online Theme & Segment Builder
 
-tmuxship comes with built-in presets for popular developer themes. Preview them interactively below or test them locally via `tmuxship theme preview`.
+Customize your tmux status bar online! Choose from 17+ curated color themes, configure **Powerline segment styles** (Rounded Pills, Classic Arrows, Slanted, Minimalist), toggle modular widgets (Session, Path, Git branch, Battery, CPU, Host, Time, Windows), and export ready-to-use configuration for `tmuxship`.
 
 <ThemePreviewer />

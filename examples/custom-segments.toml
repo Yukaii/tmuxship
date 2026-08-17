@@ -1,0 +1,107 @@
+# Rich Custom Segments Showcase for tmuxship
+# Modular segments with git, directory, host, cpu, battery, and time
+# Usage:
+#   cp examples/custom-segments.toml ~/.tmux/tmuxship.toml
+#   In ~/.tmux.conf: run-shell 'tmuxship apply'
+
+name = "Rich Custom Segments"
+window_separator = " • "
+
+# --- Left Status ---
+[left]
+"$schema" = 'https://starship.rs/config-schema.json'
+format = "$custom"
+add_newline = false
+
+# Prefix mode alert
+[left.custom.prefix_active]
+shell = "bash"
+when = 'test "${TMUX_CLIENT_PREFIX:-0}" = "1"'
+command = 'printf "󰇄 %s" "${TMUX_SESSION_NAME:-tmux}"'
+format = "[$output]($style) "
+style = "bg:#f38ba8 fg:#11111b bold"
+
+# Normal session indicator
+[left.custom.session_normal]
+shell = "bash"
+when = 'test "${TMUX_CLIENT_PREFIX:-0}" != "1"'
+command = 'printf "󰇄 %s" "${TMUX_SESSION_NAME:-tmux}"'
+format = "[$output]($style) "
+style = "bg:#313244 fg:#89b4fa bold"
+
+# Current Working Directory
+[left.custom.directory]
+shell = "bash"
+when = 'test -n "${TMUX_PANE_CURRENT_PATH}"'
+command = 'p="${TMUX_PANE_CURRENT_PATH}"; p="${p/#$HOME/~}"; printf "󰉋 %s" "$p"'
+format = "[$output]($style) "
+style = "fg:#a6adc8"
+
+# Git branch (when in repo)
+[left.custom.git_branch]
+shell = "bash"
+when = 'test -n "${TMUX_PANE_CURRENT_PATH}" && git -C "${TMUX_PANE_CURRENT_PATH}" rev-parse --is-inside-work-tree >/dev/null 2>&1'
+command = 'b=$(git -C "${TMUX_PANE_CURRENT_PATH}" branch --show-current 2>/dev/null); test -n "$b" && printf "󰊢 %s" "$b"'
+format = "[$output]($style) "
+style = "fg:#a6e3a1"
+
+# --- Center Status (Window List) ---
+[center]
+format = "$custom"
+add_newline = false
+
+[center.custom.window_active]
+when = 'test "${TMUX_WINDOW_ACTIVE:-0}" = "1"'
+command = 'printf "%s:%s" "${TMUX_WINDOW_INDEX:-1}" "${TMUX_WINDOW_NAME:-sh}"'
+format = "[$output]($style)"
+style = "bg:#45475a fg:#cba6f7 bold"
+
+[center.custom.window_inactive]
+when = 'test "${TMUX_WINDOW_ACTIVE:-0}" != "1"'
+command = 'printf "%s:%s" "${TMUX_WINDOW_INDEX:-1}" "${TMUX_WINDOW_NAME:-sh}"'
+format = "[$output]($style)"
+style = "fg:#6c7086"
+
+[center.custom.window_zoom]
+when = 'test "${TMUX_WINDOW_ACTIVE:-0}" = "1" && test "${TMUX_WINDOW_ZOOMED_FLAG:-0}" = "1"'
+command = 'printf " 🔍"'
+format = "$output"
+style = "fg:#f9e2af"
+
+# --- Right Status (Widgets) ---
+[right]
+"$schema" = 'https://starship.rs/config-schema.json'
+format = "$custom"
+add_newline = false
+
+# Hostname
+[right.custom.host]
+when = "true"
+shell = "bash"
+command = 'printf "󰒋 %s" "${TMUX_HOST_SHORT:-$(hostname -s)}"'
+format = "[$output]($style) "
+style = "fg:#89dceb"
+
+# Battery status
+[right.custom.battery]
+when = "which pmset >/dev/null 2>&1 || test -d /sys/class/power_supply/BAT0"
+shell = "bash"
+command = 'pct=$(pmset -g batt 2>/dev/null | grep -o "[0-9]\\+%" | head -1 || cat /sys/class/power_supply/BAT0/capacity 2>/dev/null); test -n "$pct" && printf "󰁹 %s" "$pct"'
+format = "[$output]($style) "
+style = "fg:#a6e3a1"
+
+# Window count
+[right.custom.window_count]
+when = "true"
+shell = "bash"
+command = 'printf "󰖲 %s" "${TMUX_SESSION_WINDOWS:-1}"'
+format = "[$output]($style) "
+style = "fg:#cba6f7"
+
+# Time
+[right.custom.time]
+when = "true"
+shell = "bash"
+command = 'date +%H:%M:%S'
+format = "[󱑂 $output]($style)"
+style = "fg:#f9e2af"

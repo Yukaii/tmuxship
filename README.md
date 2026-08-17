@@ -136,6 +136,50 @@ tmuxship theme init rose-pine
 
 ---
 
+## Powerline Segments & Customization
+
+Beyond color themes, `tmuxship` supports rich, modular **Powerline Status Segments** — similar to [rose-pine/tmux](https://github.com/rose-pine/tmux) and [catppuccin/tmux](https://github.com/catppuccin/tmux).
+
+Try the interactive **[Online Theme & Segment Builder](https://yukaii.github.io/tmuxship/themes/)** to customize segments and copy ready-to-use configurations with a single click!
+
+### Powerline Styles & Examples
+
+| Style | Glyphs | Example Config |
+|---|---|---|
+| **Rounded Pills / Bubbles** | `` (`\uE0B6`) & `` (`\uE0B4`) | [`examples/powerline-rounded.toml`](examples/powerline-rounded.toml) |
+| **Slanted / Angled** | `` (`\uE0B8`) & `` (`\uE0BA`) | [`examples/powerline-slanted.toml`](examples/powerline-slanted.toml) |
+| **Classic Powerline Arrow** | `` (`\uE0B0`) & `` (`\uE0B2`) | [`examples/powerline-arrow.toml`](examples/powerline-arrow.toml) |
+| **Rich Custom Dashboard** | Git, Path, CPU, Battery, Time | [`examples/custom-segments.toml`](examples/custom-segments.toml) |
+
+#### Rounded Capsule Pills Example (`` / ``):
+```toml
+# ~/.tmux/tmuxship.toml
+name = "Catppuccin Mocha Rounded"
+window_separator = " "
+
+[left]
+format = "$custom"
+add_newline = false
+
+[left.custom.session_normal]
+when = 'test "${TMUX_CLIENT_PREFIX:-0}" != "1"'
+command = 'printf "#[bg=#89b4fa,fg=#11111b,bold] 󰇄 %s #[bg=default,fg=#89b4fa]" "${TMUX_SESSION_NAME:-tmux}"'
+format = "$output "
+
+[center.custom.window_active]
+when = 'test "${TMUX_WINDOW_ACTIVE:-0}" = "1"'
+command = 'printf "#[bg=#cba6f7,fg=#11111b,bold] #I #[bg=#313244,fg=#cdd6f4,bold] #W #[bg=default,fg=#313244]"'
+format = "$output"
+
+[right.custom.datetime]
+when = "true"
+shell = "bash"
+command = 'printf "#[bg=#fab387,fg=#11111b,bold] 󱑂 %s #[bg=default,fg=#fab387]" "$(date +%H:%M)"'
+format = "$output"
+```
+
+---
+
 ## How It Works
 
 The recommended way to use tmuxship is `tmuxship apply`, which runs once at startup and converts your Starship TOML styles into native tmux `status-left`, `status-right`, and `window-status` options. This is fast, flicker-free, and requires no background processes.
